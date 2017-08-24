@@ -1,7 +1,7 @@
 /*
  * @brief  Communication package structure.
  * @author kyChu
- * @Date   2017/8/14
+ * @Date   2017/8/24
  */
 package protocol;
 
@@ -97,7 +97,6 @@ public class ComPackage implements Cloneable {
 	public static final byte VOLT_VERIFY_DATA = (byte)0xAA;
 	/* DSN Update command */
 	public static final byte DSN_VERIFY_DATA = (byte)0xBB;
-	public static final byte DSN_FORCE_UPDATE_VERIFY = (byte)0xBF;
 	/* ESC BurnIn Command */
 	public static final byte ESC_VERIFY_DATA = (byte)0xCC;
 	/* ACC calibrate command */
