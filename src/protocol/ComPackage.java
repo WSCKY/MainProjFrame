@@ -101,6 +101,14 @@ public class ComPackage implements Cloneable {
 	public static final byte ESC_VERIFY_DATA = (byte)0xCC;
 	/* ACC calibrate command */
 	public static final byte ACC_CALIBRATE_VERIFY = (byte)0x5A;
+	/* -------- OptFlow Check -------- */
+	public static final byte TYPE_IMG_INFO_Req = (byte)0xB0;
+	public static final byte TYPE_IMG_INFO_Ack = (byte)0xB1;
+	public static final byte TYPE_FLOW_IMG_Req = (byte)0xB2;
+	public static final byte TYPE_FLOW_IMG_Ack = (byte)0xB3;
+	public static final byte TYPE_FLOW_IMG_DAT = (byte)0xB4;
+	public static final byte FLOW_INF_REQ_CMD = (byte)0xAF;
+	public static final byte FLOW_IMG_REQ_CMD = (byte)0xFA;
 	/* -------- Repair Support -------- */
 	public static final byte TYPE_CALIB_MTD_OptReq = (byte)0xC0;
 	/* MTD Operation */
