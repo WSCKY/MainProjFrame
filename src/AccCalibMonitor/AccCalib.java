@@ -116,8 +116,8 @@ public class AccCalib extends JFrame{
 		ItemWifi = new JCheckBoxMenuItem("Wifi", _Interface.equals("Wifi"));
 		ItemUart.addActionListener(ifl); ItemWifi.addActionListener(ifl);
 
-		setTitle("F1/2加速度六面校准工具  V1.1.0");
-		setSize(660, 420);
+		setTitle("F1/2加速度六面校准工具  V1.2.0");
+		setSize(666, 420);
 		setResizable(false);
 		addWindowListener(wl);
 		setLocationRelativeTo(null);
@@ -185,14 +185,14 @@ public class AccCalib extends JFrame{
 			ComPanel.add(srSelect);
 			ComPanel.add(srBaudSet);
 			ComPanel.add(OpenPortBtn);
-			debug_info.setPreferredSize(new Dimension(340, 30));
+			debug_info.setPreferredSize(new Dimension(346, 30));
 			ComPanel.add(debug_info);
 		} else if(_Interface.equals("Wifi")) {
 			ComPanel.add(ip_lab);
 			ComPanel.add(IP_Txt);
 			ComPanel.add(port_lab);
 			ComPanel.add(Port_Txt);
-			debug_info.setPreferredSize(new Dimension(347, 30));
+			debug_info.setPreferredSize(new Dimension(353, 30));
 			ComPanel.add(debug_info);
 		}
 		add(ComPanel, BorderLayout.NORTH);
@@ -220,6 +220,12 @@ public class AccCalib extends JFrame{
 		ProgBar_s1.setStringPainted(true); ProgBar_s2.setStringPainted(true);
 		ProgBar_s3.setStringPainted(true); ProgBar_s4.setStringPainted(true);
 		ProgBar_s5.setStringPainted(true); ProgBar_s6.setStringPainted(true);
+		ps1.add(new JLabel("X_A")); ps1.getComponent(0).setFont(ps1.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
+		ps2.add(new JLabel("X_B")); ps2.getComponent(0).setFont(ps2.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
+		ps3.add(new JLabel("Y_A")); ps3.getComponent(0).setFont(ps3.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
+		ps4.add(new JLabel("Y_B")); ps4.getComponent(0).setFont(ps4.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
+		ps5.add(new JLabel("Z_A")); ps5.getComponent(0).setFont(ps5.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
+		ps6.add(new JLabel("Z_B")); ps6.getComponent(0).setFont(ps6.getComponent(0).getFont().deriveFont(Font.BOLD, 16));
 		ps1.add(ProgBar_s1); ps1.add(SampleSta_s1); ps2.add(ProgBar_s2); ps2.add(SampleSta_s2);
 		ps3.add(ProgBar_s3); ps3.add(SampleSta_s3); ps4.add(ProgBar_s4); ps4.add(SampleSta_s4);
 		ps5.add(ProgBar_s5); ps5.add(SampleSta_s5); ps6.add(ProgBar_s6); ps6.add(SampleSta_s6);
@@ -610,7 +616,7 @@ public class AccCalib extends JFrame{
 						ComPanel.add(srSelect);
 						ComPanel.add(srBaudSet);
 						ComPanel.add(OpenPortBtn);
-						debug_info.setPreferredSize(new Dimension(280, 30));
+						debug_info.setPreferredSize(new Dimension(346, 30));
 						debug_info.setText("uart selected.");
 						ComPanel.add(debug_info);
 						repaint();
@@ -622,7 +628,7 @@ public class AccCalib extends JFrame{
 						ComPanel.add(IP_Txt);
 						ComPanel.add(port_lab);
 						ComPanel.add(Port_Txt);
-						debug_info.setPreferredSize(new Dimension(287, 30));
+						debug_info.setPreferredSize(new Dimension(353, 30));
 						ComPanel.add(debug_info);
 						debug_info.setText("wifi selected.");
 						repaint();
