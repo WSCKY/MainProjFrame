@@ -116,6 +116,8 @@ public class ComPackage implements Cloneable {
 	public static final byte MTD_OprRead = (byte)0x1;
 	public static final byte MTD_OprWrite = (byte)0x2;
 	public static final byte MTD_OprErase = (byte)0x3;
+	/* -------- Design for Debug -------- */
+	public static final byte TYPE_DEBUG_CMD = (byte)0xE0;
 
 	public byte stx1;
 	public byte stx2;
