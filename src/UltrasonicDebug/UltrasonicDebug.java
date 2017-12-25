@@ -1,5 +1,6 @@
 package UltrasonicDebug;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -8,8 +9,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -235,6 +239,14 @@ public class UltrasonicDebug extends JFrame {
 		MainPanel.add(CtrlPanel, BorderLayout.CENTER); MainPanel.add(BtnsPanel, BorderLayout.SOUTH);
 		add(MainPanel, BorderLayout.CENTER);
 		getRootPane().setDefaultButton(CmdSendBtn);
+
+		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+			public void eventDispatched(AWTEvent event) {
+				if(((KeyEvent)event).getID()==KeyEvent.KEY_PRESSED) {
+					System.out.println("Pressed: " + KeyEvent.getKeyText(((KeyEvent)event).getKeyCode()));
+				}
+			}
+		}, AWTEvent.KEY_EVENT_MASK);
 
 		setVisible(true);
 
