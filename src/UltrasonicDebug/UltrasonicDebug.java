@@ -243,7 +243,25 @@ public class UltrasonicDebug extends JFrame {
 		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 			public void eventDispatched(AWTEvent event) {
 				if(((KeyEvent)event).getID()==KeyEvent.KEY_PRESSED) {
-					System.out.println("Pressed: " + KeyEvent.getKeyText(((KeyEvent)event).getKeyCode()));
+//					System.out.println("Pressed: " + KeyEvent.getKeyText(((KeyEvent)event).getKeyCode()));
+					switch(((KeyEvent)event).getKeyCode()) {
+					case KeyEvent.VK_1:
+						ASW_EN.setSelected(!ASW_EN.isSelected());
+					break;
+					case KeyEvent.VK_2:
+						SND_EN.setSelected(!SND_EN.isSelected());
+					break;
+					case KeyEvent.VK_LEFT:
+					case KeyEvent.VK_DOWN:
+						if(ValueSlider.getValue() > 0)
+							ValueSlider.setValue(ValueSlider.getValue() - 1);
+					break;
+					case KeyEvent.VK_RIGHT:
+					case KeyEvent.VK_UP:
+						if(ValueSlider.getValue() < 127)
+							ValueSlider.setValue(ValueSlider.getValue() + 1);
+					break;
+					}
 				}
 			}
 		}, AWTEvent.KEY_EVENT_MASK);
