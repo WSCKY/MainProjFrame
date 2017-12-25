@@ -258,13 +258,17 @@ public class UltrasonicDebug extends JFrame {
 					break;
 					case KeyEvent.VK_LEFT:
 					case KeyEvent.VK_DOWN:
-						if(ValueSlider.getValue() > 0)
-							ValueSlider.setValue(ValueSlider.getValue() - 1);
+						if(!ValueSlider.hasFocus()) {
+							if(ValueSlider.getValue() > 0)
+								ValueSlider.setValue(ValueSlider.getValue() - 1);
+						}
 					break;
 					case KeyEvent.VK_RIGHT:
 					case KeyEvent.VK_UP:
-						if(ValueSlider.getValue() < 127)
-							ValueSlider.setValue(ValueSlider.getValue() + 1);
+						if(!ValueSlider.hasFocus()) {
+							if(ValueSlider.getValue() < 127)
+								ValueSlider.setValue(ValueSlider.getValue() + 1);
+						}
 					break;
 					}
 				}
@@ -285,34 +289,36 @@ public class UltrasonicDebug extends JFrame {
 				new Thread(new WifiRxThread()).start();
 			}
 		}
-//		new Thread(new TxDataThread()).start();
+		new Thread(new TxDataThread()).start();
 		new Thread(new RepaintThread()).start();
 //		new Thread(new SignalTestThread()).start();
 	}
-/*
-	private byte HeartbatCnt = 0;
+
 	private class TxDataThread implements Runnable {
 		public void run() {
 			while(true) {
-				txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
-				txData.addByte(HeartbatCnt, 0);
-				txData.setLength(3);
-				HeartbatCnt ++;
-				byte[] SendBuffer = txData.getSendBuffer();
-				if(_Interface.equals("Wifi") && CommSocket != null) {
-					DatagramPacket packet = new DatagramPacket(SendBuffer, 0, SendBuffer.length, new InetSocketAddress(CommIP, CommPort));
-					try {
-						CommSocket.send(packet);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else if(_Interface.equals("Uart") && serialPort != null) {
-					try {
-						SerialTool.sendToPort(serialPort, SendBuffer);
-					} catch (SendDataToSerialPortFailure e) {
-						e.printStackTrace();
-					} catch (SerialPortOutputStreamCloseFailure e) {
-						e.printStackTrace();
+				if(AutoSND_EN.isSelected()) {
+					txData.type = ComPackage.TYPE_DEBUG_CMD;
+					txData.addByte((byte) ValueSlider.getValue(), 0);
+					txData.addByte((byte) (ASW_EN.isSelected() ? 1 : 0), 1);
+					txData.addByte((byte) (SND_EN.isSelected() ? 1 : 0), 2);
+					txData.setLength(5);
+					byte[] SendBuffer = txData.getSendBuffer();
+					if(_Interface.equals("Wifi") && CommSocket != null) {
+						DatagramPacket packet = new DatagramPacket(SendBuffer, 0, SendBuffer.length, new InetSocketAddress(CommIP, CommPort));
+						try {
+							CommSocket.send(packet);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else if(_Interface.equals("Uart") && serialPort != null) {
+						try {
+							SerialTool.sendToPort(serialPort, SendBuffer);
+						} catch (SendDataToSerialPortFailure e) {
+							e.printStackTrace();
+						} catch (SerialPortOutputStreamCloseFailure e) {
+							e.printStackTrace();
+						}
 					}
 				}
 				try {
@@ -323,7 +329,7 @@ public class UltrasonicDebug extends JFrame {
 			}
 		}
 	}
-*/
+
 //	private boolean GotResponseFlag = false;
 	private class WifiRxThread implements Runnable {
 		public void run() {
