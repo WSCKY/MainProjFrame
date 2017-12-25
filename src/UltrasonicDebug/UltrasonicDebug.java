@@ -107,6 +107,7 @@ public class UltrasonicDebug extends JFrame {
 	private JLabel SliderValLab = new JLabel("000");
 	private JCheckBox ASW_EN = new JCheckBox("固定增益");
 	private JCheckBox SND_EN = new JCheckBox("发送使能");
+	private JCheckBox AutoSND_EN = new JCheckBox("自动发送");
 
 	/* 菜单栏 */
 	JMenuBar MenuBar = new JMenuBar();
@@ -222,10 +223,11 @@ public class UltrasonicDebug extends JFrame {
 		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "动态增益", TitledBorder.LEFT, TitledBorder.TOP));
 		CtrlPanel.setLayout(new GridLayout(2, 1, 0, 0));
 		CtrlPanel.add(p);
-		ASW_EN.setFont(new Font("宋体", Font.BOLD, 24));
+		ASW_EN.setFont(new Font("宋体", Font.BOLD, 24)); ASW_EN.setSelected(false);
 		SND_EN.setFont(new Font("宋体", Font.BOLD, 24)); SND_EN.setSelected(true);
-		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 160, 35));
-		p2.add(ASW_EN); p2.add(SND_EN);
+		AutoSND_EN.setFont(new Font("宋体", Font.BOLD, 24)); AutoSND_EN.setSelected(false);
+		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 35));
+		p2.add(ASW_EN); p2.add(SND_EN); p2.add(AutoSND_EN);
 		CtrlPanel.add(p2);
 
 		CmdSendBtn.setPreferredSize(new Dimension(160, 40));
@@ -250,6 +252,9 @@ public class UltrasonicDebug extends JFrame {
 					break;
 					case KeyEvent.VK_2:
 						SND_EN.setSelected(!SND_EN.isSelected());
+					break;
+					case KeyEvent.VK_3:
+						AutoSND_EN.setSelected(!AutoSND_EN.isSelected());
 					break;
 					case KeyEvent.VK_LEFT:
 					case KeyEvent.VK_DOWN:
