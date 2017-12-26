@@ -102,6 +102,8 @@ public class UltrasonicDebug extends JFrame {
 	private JPanel BtnsPanel = new JPanel();
 	private JButton CmdSendBtn = new JButton("发送配置");
 
+	private JLabel DisLab = new JLabel("0.0cm");
+
 	private JSlider ValueSlider = new JSlider(0, 127);
 	Dictionary<Integer, Component> labelTable = new Hashtable<Integer, Component>();
 	private JLabel SliderValLab = new JLabel("000");
@@ -127,8 +129,8 @@ public class UltrasonicDebug extends JFrame {
 		ItemUart.addActionListener(ifl); ItemWifi.addActionListener(ifl);
 
 		setTitle("超声波调试工具 V0.0.1");
-		setSize(600, 330);
-		setResizable(false);
+		setSize(600, 400);
+//		setResizable(false);
 		addWindowListener(wl);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -221,7 +223,7 @@ public class UltrasonicDebug extends JFrame {
 		JPanel p = new JPanel(); p.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 0));
 		p.add(ValueSlider); p.add(SliderValLab);
 		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "动态增益", TitledBorder.LEFT, TitledBorder.TOP));
-		CtrlPanel.setLayout(new GridLayout(2, 1, 0, 0));
+		CtrlPanel.setLayout(new GridLayout(3, 1, 0, 0));
 		CtrlPanel.add(p);
 		ASW_EN.setFont(new Font("宋体", Font.BOLD, 24)); ASW_EN.setSelected(false);
 		SND_EN.setFont(new Font("宋体", Font.BOLD, 24)); SND_EN.setSelected(true);
@@ -229,6 +231,10 @@ public class UltrasonicDebug extends JFrame {
 		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 35));
 		p2.add(ASW_EN); p2.add(SND_EN); p2.add(AutoSND_EN);
 		CtrlPanel.add(p2);
+		DisLab.setFont(new Font("宋体", Font.BOLD, 40));
+		JPanel p3 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+		p3.add(DisLab);
+		CtrlPanel.add(p3);
 
 		CmdSendBtn.setPreferredSize(new Dimension(160, 40));
 		CmdSendBtn.setFont(new Font("宋体", Font.BOLD, 20));
