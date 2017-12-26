@@ -225,7 +225,7 @@ public class UltrasonicDebug extends JFrame {
 		CtrlPanel.add(p);
 		ASW_EN.setFont(new Font("宋体", Font.BOLD, 24)); ASW_EN.setSelected(false);
 		SND_EN.setFont(new Font("宋体", Font.BOLD, 24)); SND_EN.setSelected(true);
-		AutoSND_EN.setFont(new Font("宋体", Font.BOLD, 24)); AutoSND_EN.setSelected(false);
+		AutoSND_EN.setFont(new Font("宋体", Font.BOLD, 24)); AutoSND_EN.setSelected(false); AutoSND_EN.addChangeListener(asl);
 		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 35));
 		p2.add(ASW_EN); p2.add(SND_EN); p2.add(AutoSND_EN);
 		CtrlPanel.add(p2);
@@ -419,6 +419,17 @@ public class UltrasonicDebug extends JFrame {
 			e.printStackTrace();
 		}
 	}
+
+	private ChangeListener asl = new ChangeListener() {
+		public void stateChanged(ChangeEvent e) {
+			if((JCheckBox)e.getSource() == AutoSND_EN) {
+				if(AutoSND_EN.isSelected())
+					CmdSendBtn.setEnabled(false);
+				else
+					CmdSendBtn.setEnabled(true);
+			}
+		}
+	};
 
 	private ActionListener csl = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
