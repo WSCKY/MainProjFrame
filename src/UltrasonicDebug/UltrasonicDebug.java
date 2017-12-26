@@ -297,7 +297,7 @@ public class UltrasonicDebug extends JFrame {
 		}
 		new Thread(new TxDataThread()).start();
 		new Thread(new RepaintThread()).start();
-//		new Thread(new SignalTestThread()).start();
+		new Thread(new SignalTestThread()).start();
 	}
 
 	private class TxDataThread implements Runnable {
@@ -336,7 +336,7 @@ public class UltrasonicDebug extends JFrame {
 		}
 	}
 
-//	private boolean GotResponseFlag = false;
+	private boolean GotResponseFlag = false;
 	private class WifiRxThread implements Runnable {
 		public void run() {
 			while(true) {
@@ -411,10 +411,14 @@ public class UltrasonicDebug extends JFrame {
 						e.printStackTrace();
 					}
 				}
-//				GotResponseFlag = true;
+				GotResponseFlag = true;
 				switch(rxData.type) {
 					case ComPackage.TYPE_UPGRADE_FC_ACK:
 						debug_info.setText("fc firmware lost.");
+					break;
+					case ComPackage.TYPE_DIST_RAW_DAT:
+						if(rxData.rData[0] == (byte)0xAE)
+							DisLab.setText(String.format("%.1fcm", rxData.readoutFloat(1)));
 					break;
 					default:
 						debug_info.setText("connected.");
@@ -465,7 +469,7 @@ public class UltrasonicDebug extends JFrame {
 			}
 		}
 	};
-/*
+
 	private static int SignalLostCnt = 0;
 	private class SignalTestThread implements Runnable {
 		public void run() {
@@ -492,7 +496,7 @@ public class UltrasonicDebug extends JFrame {
 			}
 		}
 	}
-*/
+
 	private ChangeListener scl = new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
 			if((JSlider)e.getSource() == ValueSlider) {
