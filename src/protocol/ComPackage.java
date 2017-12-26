@@ -107,6 +107,8 @@ public class ComPackage implements Cloneable {
 	public static final byte TYPE_FLOW_IMG_Req = (byte)0xB2;
 	public static final byte TYPE_FLOW_IMG_Ack = (byte)0xB3;
 	public static final byte TYPE_FLOW_IMG_DAT = (byte)0xB4;
+
+	public static final byte TYPE_DIST_RAW_DAT = (byte)0xBA;
 	public static final byte FLOW_INF_REQ_CMD = (byte)0xAF;
 	public static final byte FLOW_IMG_REQ_CMD = (byte)0xFA;
 	/* -------- Repair Support -------- */
