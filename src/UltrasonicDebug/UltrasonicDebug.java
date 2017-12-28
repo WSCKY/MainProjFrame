@@ -107,6 +107,9 @@ public class UltrasonicDebug extends JFrame {
 	private JSlider ValueSlider = new JSlider(0, 127);
 	Dictionary<Integer, Component> labelTable = new Hashtable<Integer, Component>();
 	private JLabel SliderValLab = new JLabel("000");
+	Dictionary<Integer, Component> AdjPercentTab = new Hashtable<Integer, Component>();
+	private JSlider DeadbandSlider = new JSlider(0, 100);
+	private JLabel DeadbandValLab = new JLabel("46000");
 	private JCheckBox ASW_EN = new JCheckBox("固定增益");
 	private JCheckBox SND_EN = new JCheckBox("发送使能");
 	private JCheckBox AutoSND_EN = new JCheckBox("自动发送");
@@ -129,8 +132,8 @@ public class UltrasonicDebug extends JFrame {
 		ItemUart.addActionListener(ifl); ItemWifi.addActionListener(ifl);
 
 		setTitle("超声波调试工具 V0.0.1");
-		setSize(600, 400);
-//		setResizable(false);
+		setSize(600, 460);
+		setResizable(false);
 		addWindowListener(wl);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -208,6 +211,12 @@ public class UltrasonicDebug extends JFrame {
 		}
 		add(ComPanel, BorderLayout.NORTH);
 
+		CtrlPanel.setLayout(new GridLayout(4, 1, 0, 0));
+
+		DisLab.setFont(new Font("宋体", Font.BOLD, 40));
+		JPanel p3 = new JPanel(); p3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+		p3.add(DisLab); CtrlPanel.add(p3);
+
 		ValueSlider.setPaintLabels(true);
 		ValueSlider.setValue(0);
 		labelTable.put(0, new JLabel("000"));
@@ -223,18 +232,25 @@ public class UltrasonicDebug extends JFrame {
 		JPanel p = new JPanel(); p.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 0));
 		p.add(ValueSlider); p.add(SliderValLab);
 		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "动态增益", TitledBorder.LEFT, TitledBorder.TOP));
-		CtrlPanel.setLayout(new GridLayout(3, 1, 0, 0));
 		CtrlPanel.add(p);
+		DeadbandSlider.setPaintLabels(true); DeadbandSlider.setValue(50);
+		AdjPercentTab.put(0, new JLabel("23000"));
+		AdjPercentTab.put(50, new JLabel("46000"));
+		AdjPercentTab.put(100, new JLabel("69000")); DeadbandSlider.setLabelTable(AdjPercentTab);
+		DeadbandSlider.addChangeListener(scl);
+		DeadbandSlider.setPreferredSize(new Dimension(470, 50));
+		DeadbandValLab.setFont(DeadbandValLab.getFont().deriveFont(Font.BOLD, 28));
+		JPanel p1 = new JPanel(); p1.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 0));
+		p1.add(DeadbandSlider); p1.add(DeadbandValLab);
+		p1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "死区时间", TitledBorder.LEFT, TitledBorder.TOP));
+		CtrlPanel.add(p1);
+
 		ASW_EN.setFont(new Font("宋体", Font.BOLD, 24)); ASW_EN.setSelected(false);
 		SND_EN.setFont(new Font("宋体", Font.BOLD, 24)); SND_EN.setSelected(true);
 		AutoSND_EN.setFont(new Font("宋体", Font.BOLD, 24)); AutoSND_EN.setSelected(false); AutoSND_EN.addChangeListener(asl);
-		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 35));
+		JPanel p2 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 65, 35));
 		p2.add(ASW_EN); p2.add(SND_EN); p2.add(AutoSND_EN);
 		CtrlPanel.add(p2);
-		DisLab.setFont(new Font("宋体", Font.BOLD, 40));
-		JPanel p3 = new JPanel(); p2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
-		p3.add(DisLab);
-		CtrlPanel.add(p3);
 
 		CmdSendBtn.setPreferredSize(new Dimension(160, 40));
 		CmdSendBtn.setFont(new Font("宋体", Font.BOLD, 20));
@@ -264,17 +280,27 @@ public class UltrasonicDebug extends JFrame {
 					break;
 					case KeyEvent.VK_LEFT:
 					case KeyEvent.VK_DOWN:
-						if(!ValueSlider.hasFocus()) {
+						if(!ValueSlider.hasFocus() && !DeadbandSlider.hasFocus()) {
 							if(ValueSlider.getValue() > 0)
 								ValueSlider.setValue(ValueSlider.getValue() - 1);
 						}
 					break;
 					case KeyEvent.VK_RIGHT:
 					case KeyEvent.VK_UP:
-						if(!ValueSlider.hasFocus()) {
+						if(!ValueSlider.hasFocus() && !DeadbandSlider.hasFocus()) {
 							if(ValueSlider.getValue() < 127)
 								ValueSlider.setValue(ValueSlider.getValue() + 1);
 						}
+					break;
+					case KeyEvent.VK_A:
+					case KeyEvent.VK_S:
+						if(DeadbandSlider.getValue() > 0)
+							DeadbandSlider.setValue(DeadbandSlider.getValue() - 1);
+					break;
+					case KeyEvent.VK_W:
+					case KeyEvent.VK_D:
+						if(DeadbandSlider.getValue() < 100)
+							DeadbandSlider.setValue(DeadbandSlider.getValue() + 1);
 					break;
 					}
 				}
@@ -300,16 +326,22 @@ public class UltrasonicDebug extends JFrame {
 		new Thread(new SignalTestThread()).start();
 	}
 
+	private byte[] CreateSendBuffer() {
+		txData.type = ComPackage.TYPE_DEBUG_CMD;
+		txData.addByte((byte) ValueSlider.getValue(), 0);
+		txData.addByte((byte) (ASW_EN.isSelected() ? 1 : 0), 1);
+		txData.addByte((byte) (SND_EN.isSelected() ? 1 : 0), 2);
+		txData.addInteger(DeadbandSlider.getValue() * 460 + 23000, 3);
+		txData.addInteger(0, 7);
+		txData.setLength(13);
+		return txData.getSendBuffer();
+	}
+
 	private class TxDataThread implements Runnable {
 		public void run() {
 			while(true) {
 				if(AutoSND_EN.isSelected()) {
-					txData.type = ComPackage.TYPE_DEBUG_CMD;
-					txData.addByte((byte) ValueSlider.getValue(), 0);
-					txData.addByte((byte) (ASW_EN.isSelected() ? 1 : 0), 1);
-					txData.addByte((byte) (SND_EN.isSelected() ? 1 : 0), 2);
-					txData.setLength(5);
-					byte[] SendBuffer = txData.getSendBuffer();
+					byte[] SendBuffer = CreateSendBuffer();//txData.getSendBuffer();
 					if(_Interface.equals("Wifi") && CommSocket != null) {
 						DatagramPacket packet = new DatagramPacket(SendBuffer, 0, SendBuffer.length, new InetSocketAddress(CommIP, CommPort));
 						try {
@@ -443,12 +475,7 @@ public class UltrasonicDebug extends JFrame {
 
 	private ActionListener csl = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			txData.type = ComPackage.TYPE_DEBUG_CMD;
-			txData.addByte((byte) ValueSlider.getValue(), 0);
-			txData.addByte((byte) (ASW_EN.isSelected() ? 1 : 0), 1);
-			txData.addByte((byte) (SND_EN.isSelected() ? 1 : 0), 2);
-			txData.setLength(5);
-			byte[] SendBuffer = txData.getSendBuffer();
+			byte[] SendBuffer = CreateSendBuffer();
 			if(_Interface.equals("Wifi") && CommSocket != null) {
 				DatagramPacket packet = new DatagramPacket(SendBuffer, 0, SendBuffer.length, new InetSocketAddress(CommIP, CommPort));
 				try {
@@ -501,6 +528,8 @@ public class UltrasonicDebug extends JFrame {
 		public void stateChanged(ChangeEvent e) {
 			if((JSlider)e.getSource() == ValueSlider) {
 				SliderValLab.setText(String.format("%03d", ValueSlider.getValue()));
+			} else if((JSlider)e.getSource() == DeadbandSlider) {
+				DeadbandValLab.setText(String.format("%d", DeadbandSlider.getValue() * 460 + 23000));
 			}
 		}
 	};
