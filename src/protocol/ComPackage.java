@@ -25,6 +25,7 @@ public class ComPackage implements Cloneable {
 	public static final byte TYPE_FC_APP_HEARTBEAT = (byte)0x01;
 	/* -------- Common communication -------- */
 	public static final byte TYPE_FC_Response = (byte)0x11;
+	public static final byte TYPE_FC_VirtualCtrl = (byte)0x15;
 	/* -------- programmable -------- */
 	public static final byte TYPE_ProgrammableTX = (byte)0x22;
 	public static final byte TYPE_ProgrammableACK = (byte)0x23;
@@ -120,6 +121,7 @@ public class ComPackage implements Cloneable {
 	public static final byte MTD_OprErase = (byte)0x3;
 	/* -------- Design for Debug -------- */
 	public static final byte TYPE_DEBUG_CMD = (byte)0xE0;
+	public static final byte TYPE_WIFI_RC_RAW = (byte)0xE1;
 
 	public byte stx1;
 	public byte stx2;
