@@ -16,18 +16,17 @@ public class RC_WifiTest extends MyMainFrame {
 	private static ComPackage rxData = new ComPackage();
 
 	private JPanel MainPanel = null;
-	private JLabel ChannelLab_1 = new JLabel("000");
-	private JLabel ChannelLab_2 = new JLabel("000");
-	private JLabel ChannelLab_3 = new JLabel("000");
-	private JLabel ChannelLab_4 = new JLabel("000");
+	private JLabel ChannelLab_1 = new JLabel("0000");
+	private JLabel ChannelLab_2 = new JLabel("0000");
+	private JLabel ChannelLab_3 = new JLabel("0000");
+	private JLabel ChannelLab_4 = new JLabel("0000");
 
 	public RC_WifiTest() {
-		MyMainFrame frame = new MyMainFrame();
-		MainPanel = frame.getUsrMainPanel();
+		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		MainPanel.add(ChannelLab_1); MainPanel.add(ChannelLab_2); MainPanel.add(ChannelLab_3); MainPanel.add(ChannelLab_4);
-		frame.setVisible(true);
-		frame.setAutoTxEnable(true);
+		this.setVisible(true);
+		this.setAutoTxEnable(true);
 	}
 
 	public void RxDataProcess() {
@@ -39,10 +38,10 @@ public class RC_WifiTest extends MyMainFrame {
 			}
 		}
 		if(rxData.type == ComPackage.TYPE_WIFI_RC_RAW) {
-			ChannelLab_1.setText(String.format("%.03d", rxData.readoutCharacter(0)));
-			ChannelLab_2.setText(String.format("%.03d", rxData.readoutCharacter(2)));
-			ChannelLab_3.setText(String.format("%.03d", rxData.readoutCharacter(4)));
-			ChannelLab_4.setText(String.format("%.03d", rxData.readoutCharacter(8)));
+			ChannelLab_1.setText(String.format("%04d", (int)(rxData.readoutCharacter(0))));
+			ChannelLab_2.setText(String.format("%04d", (int)(rxData.readoutCharacter(2))));
+			ChannelLab_3.setText(String.format("%04d", (int)(rxData.readoutCharacter(4))));
+			ChannelLab_4.setText(String.format("%04d", (int)(rxData.readoutCharacter(6))));
 		}
 	}
 
