@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -121,6 +123,7 @@ public class MyMainFrame extends JFrame {
 		this.setSize(FrameWidth, FrameHeight);
 		this.setResizable(false);
 		this.addWindowListener(wl);
+		this.addComponentListener(wcl);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -213,6 +216,10 @@ public class MyMainFrame extends JFrame {
 		new Thread(new TxDataThread()).start();
 		new Thread(new RepaintThread()).start();
 		new Thread(new SignalTestThread()).start();
+	}
+
+	public void setDebugString(String s) {
+		debug_info.setText(s);
 	}
 
 	private static boolean AutoTxEnable = false;
@@ -535,6 +542,33 @@ public class MyMainFrame extends JFrame {
 				CommSocket.close();
 			}
 			System.exit(0);
+		}
+	};
+	
+	ComponentAdapter wcl = new ComponentAdapter() {
+		public void componentResized(ComponentEvent e) {
+			if(_Interface.equals("Uart")) {
+				ComPanel.removeAll();
+
+				ComPanel.add(srSelect);
+				ComPanel.add(srBaudSet);
+				ComPanel.add(OpenPortBtn);
+				debug_info.setPreferredSize(new Dimension(FrameWidth - 320, 30));
+				ComPanel.add(debug_info);
+				repaint();
+				ComPanel.validate();
+			} else if(_Interface.equals("Wifi")) {
+				ComPanel.removeAll();
+
+				ComPanel.add(ip_lab);
+				ComPanel.add(IP_Txt);
+				ComPanel.add(port_lab);
+				ComPanel.add(Port_Txt);
+				debug_info.setPreferredSize(new Dimension(FrameWidth - 313, 30));
+				ComPanel.add(debug_info);
+				repaint();
+				ComPanel.validate();
+			}
 		}
 	};
 
