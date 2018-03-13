@@ -29,6 +29,8 @@ import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import javax.crypto.BadPaddingException;
@@ -41,6 +43,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
@@ -258,6 +262,25 @@ public class MainEncrypter extends JFrame {
 	};
 
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Date Today = new Date();
+		Date InvalidDay;
+		try {
+			InvalidDay = df.parse("2018-6-6");
+			if(Today.getTime() > InvalidDay.getTime()) {
+				JOptionPane.showMessageDialog(null, "抱歉，软件授权失败!", "系统错误", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new MainEncrypter();
 	}
 }
