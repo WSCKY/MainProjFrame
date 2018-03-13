@@ -274,7 +274,7 @@ public class MainEncrypter extends JFrame {
 		try {
 			InvalidDay = df.parse("2018-6-6");
 			if(Today.getTime() > InvalidDay.getTime()) {
-				JOptionPane.showMessageDialog(null, "抱歉，软件授权失败!", "系统错误", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Sorry, Software is NOT licensed!", "System Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
 		} catch (ParseException e) {
