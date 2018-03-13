@@ -60,6 +60,7 @@ public class MainEncrypter extends JFrame {
 	private static final byte Major = 2;
 	private static final byte Minor = 0;
 	private static final byte FixNumber = 0;
+	private static final String InvalidTime = "2018-6-6 12:00:00";
 
 	private JPanel NorthPanel = null;
 	private JPanel SouthPanel = null;
@@ -262,25 +263,54 @@ public class MainEncrypter extends JFrame {
 	};
 
 	public static void main(String[] args) {
+		boolean LicenseValid = true;
+		Date CurrentTime = new Date(); /* get current time */
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Preferences perf_info = Preferences.userRoot().node("kyChuLicenseDate");
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		Date Today = new Date();
-		Date InvalidDay;
+		if(perf_info.get("_fisrt_day", "").equals("") && !perf_info.get("_license_key", "").equals("_kychu_permit")) {
+			perf_info.put("_fisrt_day", df.format(CurrentTime));
+		}
+		if(perf_info.get("_last_day", "").equals(""))
+			perf_info.put("_last_day", df.format(CurrentTime));
+		Date InvalidDate, LastDate, FirstDate;
 		try {
-			InvalidDay = df.parse("2018-6-6");
-			if(Today.getTime() > InvalidDay.getTime()) {
+			InvalidDate = df.parse(InvalidTime);
+			LastDate = df.parse(perf_info.get("_last_day", ""));
+			FirstDate = df.parse(perf_info.get("_fisrt_day", ""));
+			if(LastDate.getTime() > CurrentTime.getTime()) {
+				LicenseValid = false;
+			} else {
+				perf_info.put("_last_day", df.format(CurrentTime)); /* Update Last Time */
+			}
+			if(CurrentTime.getTime() > InvalidDate.getTime() || LastDate.getTime() > InvalidDate.getTime()) {
+				LicenseValid = false;
+			}
+			/* license check result */
+			if(!LicenseValid) {
 				JOptionPane.showMessageDialog(null, "Sorry, Software is NOT licensed!", "System Error", JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
+			/* --------------------------------------------------- */
+			if(!perf_info.get("_license_key", "").equals("_kychu_permit")) {
+				int DaysUsed = (int) ((CurrentTime.getTime() - FirstDate.getTime()) / 86400000);
+				if(DaysUsed < 15 && DaysUsed >= 0)
+					JOptionPane.showMessageDialog(null, "软件未获授权！ 试用期剩余\n   " + (15 - DaysUsed) + " 天!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+				else {
+					JOptionPane.showMessageDialog(null, "软件未获授权！ 试用期剩余\n   0 天!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+					System.exit(0);
+				}
+			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "License Data Error!", "System Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
+
 		new MainEncrypter();
 	}
 }
