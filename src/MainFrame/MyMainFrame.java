@@ -230,7 +230,7 @@ public class MyMainFrame extends JFrame {
 
 	private byte HeartbatCnt = 0;
 	public byte[] CreateSendBuffer() {
-		txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+		txData.type = ComPackage.TYPE_COM_HEARTBEAT;
 		txData.addByte(HeartbatCnt, 0);
 		txData.setLength(3);
 		HeartbatCnt ++;
