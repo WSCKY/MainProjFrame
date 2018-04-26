@@ -224,6 +224,7 @@ public class MyMainFrame extends JFrame {
 
 	private static boolean AutoTxEnable = false;
 	private static int AutoTxTimeDelay = 100;
+	public ComPackage getTxPackage() { return txData; }
 	public void setAutoTxEnable(boolean en) {AutoTxEnable = en;}
 	public void setAutoTxDelayTicks(int ticks) {AutoTxTimeDelay = ticks;}
 
@@ -282,6 +283,8 @@ public class MyMainFrame extends JFrame {
 //					"C4: " + (int)rxData.readoutCharacter(6));
 //		}
 	}
+
+	public void SignalLostCallback() {}
 
 	private boolean GotResponseFlag = false;
 	private void RxDataPreProcess(byte[] rData, int len) {
@@ -371,6 +374,7 @@ public class MyMainFrame extends JFrame {
 
 						debug_info.setText("signal lost.");
 						ComPanel.setBackground(new Color(233, 80, 80, 160));
+						SignalLostCallback();
 					}
 				} else {
 					SignalLostCnt = 0;
