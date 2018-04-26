@@ -18,6 +18,7 @@ import javax.swing.UIManager;
 import MainFrame.MyMainFrame;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypeDeepblue;
 
 public class SalesCtrl extends MyMainFrame {
 	private static final long serialVersionUID = 1L;
@@ -184,23 +185,23 @@ public class SalesCtrl extends MyMainFrame {
 	byte HeartBeatCnt = 0;
 	public byte[] CreateSendBuffer() {
 		if(BarUpdateMode) {
-			txData.type = ComPackage.TYPE_ProgrammableTX;
+			txData.type = TypeDeepblue.TYPE_CtrlCmd2;
 			txData.addByte((byte)BarModeSelecter.getSelectedIndex(), 0);
 			txData.setLength(3);
 		} else if(DoorCmdUpdate) {
-			txData.type = ComPackage.TYPE_ProgrammableACK;
+			txData.type = TypeDeepblue.TYPE_CtrlCmd3;
 			txData.addByte(DoorCtrlCmd, 0);
 			txData.setLength(3);
 		} else if(BitCtrlUpdate) {
-			txData.type = (byte) 0x21;
+			txData.type = TypeDeepblue.TYPE_CtrlCmd1;
 			txData.addByte(BitCtrlExpVal, 0);
 			txData.setLength(3);
 		} else if(VersionReqFlag) {
-			txData.type = ComPackage.TYPE_VERSION_REQUEST;
+			txData.type = TypeDeepblue.TYPE_VERSION_REQUEST;
 			txData.addByte((byte) 0x0F, 0);
 			txData.setLength(3);
 		} else {
-			txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+			txData.type = TypeDeepblue.TYPE_COM_HEARTBEAT;
 			txData.addByte(HeartBeatCnt ++, 0);
 			txData.setLength(3);
 		}
@@ -219,9 +220,9 @@ public class SalesCtrl extends MyMainFrame {
 				e.printStackTrace();
 			}
 		}
-		if(rxData.type == ComPackage.TYPE_FC_APP_HEARTBEAT) {
+		if(rxData.type == TypeDeepblue.TYPE_COM_HEARTBEAT) {
 			
-		} else if(rxData.type == ComPackage.TYPE_FC_Response) {
+		} else if(rxData.type == TypeDeepblue.TYPE_DEV_Response) {
 			float val = rxData.readoutFloat(1);
 			VoltageInfo.setText(String.format("%.2f", val));
 			BitCtrlCurVal = (byte) rxData.rData[5];
@@ -264,7 +265,7 @@ public class SalesCtrl extends MyMainFrame {
 					DoorCmdUpdate = false;
 				}
 			}
-		} else if(rxData.type == ComPackage.TYPE_VERSION_Response) {
+		} else if(rxData.type == TypeDeepblue.TYPE_VERSION_Response) {
 			VersionReqFlag = false;
 			char ver = rxData.readoutCharacter(0);
 			VersionInfo.setText("V" + (ver >> 12) + "." + ((ver >> 8) & 0x0F) + "." + (ver & 0x00FF));
