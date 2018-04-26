@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import protocol.ComPackage;
+import protocol.PackageTypes.TypePartnerX;
 
 public class RepairTool extends JFrame{
 	/**
@@ -74,12 +75,12 @@ public class RepairTool extends JFrame{
 
 			int DataCnt = 0;
 			if(Btn.equals("EraseMTD")) {
-				txData.type = ComPackage.TYPE_CALIB_MTD_OptReq;
-				txData.addByte(ComPackage.MTD_OprErase, DataCnt); DataCnt ++;
-				txData.addByte((byte)(ComPackage.MTD_OprErase ^ 0xDD), DataCnt); DataCnt ++;
+				txData.type = TypePartnerX.TYPE_CALIB_MTD_OptReq;
+				txData.addByte(TypePartnerX.MTD_OprErase, DataCnt); DataCnt ++;
+				txData.addByte((byte)(TypePartnerX.MTD_OprErase ^ 0xDD), DataCnt); DataCnt ++;
 			} else if(Btn.equals("AccCalib")) {
-				txData.type = ComPackage.TYPE_ACC_CALIBRATE;
-				txData.addByte(ComPackage.ACC_CALIBRATE_VERIFY, DataCnt); DataCnt ++;
+				txData.type = TypePartnerX.TYPE_ACC_CALIBRATE;
+				txData.addByte(TypePartnerX.ACC_CALIBRATE_VERIFY, DataCnt); DataCnt ++;
 			} else {
 				return;
 			}

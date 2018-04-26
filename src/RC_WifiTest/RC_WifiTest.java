@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 import MainFrame.MyMainFrame;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 
 public class RC_WifiTest extends MyMainFrame {
 	private static final long serialVersionUID = 1L;
@@ -72,7 +73,7 @@ public class RC_WifiTest extends MyMainFrame {
 				e.printStackTrace();
 			}
 		}
-		if(rxData.type == ComPackage.TYPE_WIFI_RC_RAW) {
+		if(rxData.type == TypePartnerX.TYPE_WIFI_RC_RAW) {
 			for(int i = 0; i < ChannelNumber; i ++) {
 				ChannelVals[i].setText(String.format("%04d", (int)(rxData.readoutCharacter(i << 1))));
 				ChannelProgs[i].setValue((int)(rxData.readoutCharacter(i << 1)));

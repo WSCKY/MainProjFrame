@@ -45,6 +45,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.SerialTool;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
@@ -213,7 +214,7 @@ public class BaroCheck extends JFrame{
 		public void run() {
 			while(true) {
 				{
-					txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+					txData.type = TypePartnerX.TYPE_FC_APP_HEARTBEAT;
 					txData.addByte(HeartbatCnt, 0);
 					txData.setLength(3);
 					HeartbatCnt ++;
@@ -322,7 +323,7 @@ public class BaroCheck extends JFrame{
 				GotResponseFlag = true;
 				debug_info.setText("connected.");
 				switch(rxData.type) {
-					case ComPackage.TYPE_FC_Response:
+					case TypePartnerX.TYPE_FC_Response:
 						if((rxData.rData[1] & 0x02) == 0x02) {
 							BaroLabel.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("2.png")).getImage().getScaledInstance(256, 256, Image.SCALE_DEFAULT)));
 						} else {

@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import protocol.ComPackage;
+import protocol.PackageTypes.TypePartnerX;
 
 public class SDKTester extends JFrame{
 	/**
@@ -96,19 +97,19 @@ public class SDKTester extends JFrame{
 			String Btn = ((JButton)e.getSource()).getText();
 
 			int DataCnt = 0;
-			txData.type = ComPackage.TYPE_ProgrammableTX;
+			txData.type = TypePartnerX.TYPE_ProgrammableTX;
 			if(Btn.equals("forward")) {
-				txData.addByte(ComPackage.Program_Forward, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_Forward, DataCnt); DataCnt ++;
 			} else if(Btn.equals("Backward")) {
-				txData.addByte(ComPackage.Program_Backward, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_Backward, DataCnt); DataCnt ++;
 			} else if(Btn.equals("Left")) {
-				txData.addByte(ComPackage.Program_TwLeft, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_TwLeft, DataCnt); DataCnt ++;
 			} else if(Btn.equals("Right")) {
-				txData.addByte(ComPackage.Program_TwRight, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_TwRight, DataCnt); DataCnt ++;
 			} else if(Btn.equals("Takeoff")) {
-				txData.addByte(ComPackage.Program_Takeoff, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_Takeoff, DataCnt); DataCnt ++;
 			} else if(Btn.equals("Land")) {
-				txData.addByte(ComPackage.Program_Land, DataCnt); DataCnt ++;
+				txData.addByte(TypePartnerX.Program_Land, DataCnt); DataCnt ++;
 			} else {
 				return;
 			}

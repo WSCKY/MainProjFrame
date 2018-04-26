@@ -58,6 +58,7 @@ import FirmwareRule.FileHeader;
 import FirmwareRule.FileNameRegular;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 
 public class UpgradeTool extends JFrame {
 	/**
@@ -329,9 +330,9 @@ public class UpgradeTool extends JFrame {
 									}
 								}
 								GotResponseFlag = true;
-								if(rxData.type == ComPackage.TYPE_UPGRADE_FC_ACK) {
+								if(rxData.type == TypePartnerX.TYPE_UPGRADE_FC_ACK) {
 									switch(rxData.rData[0]) {
-										case ComPackage.FC_STATE_ERASE:
+										case TypePartnerX.FC_STATE_ERASE:
 											ErrorShownFlag = false;
 											RefusedShownFlag = false;
 											if(UpgradeStep == UpgradeSendRequest) {
@@ -340,7 +341,7 @@ public class UpgradeTool extends JFrame {
 												txProg.setString("Erasing...   " + rxData.rData[1] + "%");
 											}
 										break;
-										case ComPackage.FC_STATE_UPGRADE:
+										case TypePartnerX.FC_STATE_UPGRADE:
 											ErrorShownFlag = false;
 											RefusedShownFlag = false;
 											/* state must be updated before "UpdateBufferFlag = true;" */
@@ -359,31 +360,31 @@ public class UpgradeTool extends JFrame {
 											}
 //											TimeMes_M = System.currentTimeMillis();
 										break;
-										case ComPackage.FC_STATE_REFUSED:
+										case TypePartnerX.FC_STATE_REFUSED:
 											if(UpgradeStep == UpgradeSendRequest) {
 												ExitUpgrade();
 												if(RefusedShownFlag == false) {
 													RefusedShownFlag = true;
 													switch(rxData.rData[1]) {
-														case ComPackage.FC_REFUSED_BUSY:
+														case TypePartnerX.FC_REFUSED_BUSY:
 															JOptionPane.showMessageDialog(null, "fc busy.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_VERSION_OLD:
+														case TypePartnerX.FC_REFUSED_VERSION_OLD:
 															JOptionPane.showMessageDialog(null, "version too old.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_OVER_SIZE:
+														case TypePartnerX.FC_REFUSED_OVER_SIZE:
 															JOptionPane.showMessageDialog(null, "over size.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_TYPE_ERROR:
+														case TypePartnerX.FC_REFUSED_TYPE_ERROR:
 															JOptionPane.showMessageDialog(null, "type error.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_LOW_VOLTAGE:
+														case TypePartnerX.FC_REFUSED_LOW_VOLTAGE:
 															JOptionPane.showMessageDialog(null, "low voltage.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_FW_TYPE_ERROR:
+														case TypePartnerX.FC_REFUSED_FW_TYPE_ERROR:
 															JOptionPane.showMessageDialog(null, "fw type error.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
-														case ComPackage.FC_REFUSED_UNKNOWERROR:
+														case TypePartnerX.FC_REFUSED_UNKNOWERROR:
 														default:
 															JOptionPane.showMessageDialog(null, "fc unkonw error.", "fc refused!", JOptionPane.ERROR_MESSAGE);
 														break;
@@ -391,7 +392,7 @@ public class UpgradeTool extends JFrame {
 												}
 											}
 										break;
-										case ComPackage.FC_STATE_JUMPFAILED:
+										case TypePartnerX.FC_STATE_JUMPFAILED:
 											if(ErrorShownFlag == false) {
 												ErrorShownFlag = true;
 												JOptionPane.showMessageDialog(null, "fc jump to application failed!", "fc error!", JOptionPane.ERROR_MESSAGE);
@@ -476,8 +477,8 @@ public class UpgradeTool extends JFrame {
 									}
 									FileHeader fh = new FileHeader(FileHeaderData);
 									if(FileHeader.IsValid(fh)) {
-										txData.type = ComPackage.TYPE_UPGRADE_REQUEST;
-										txData.addByte(ComPackage.FW_TYPE_FC, DataCnt); DataCnt += 1;
+										txData.type = TypePartnerX.TYPE_UPGRADE_REQUEST;
+										txData.addByte(TypePartnerX.FW_TYPE_FC, DataCnt); DataCnt += 1;
 										txData.addInteger(NumberOfPackage, DataCnt); DataCnt += 4;
 										txData.addInteger(FileSize, DataCnt); DataCnt += 4;
 										txData.addCharacter(fh.getVersion(), DataCnt); DataCnt += 2;
@@ -500,7 +501,7 @@ public class UpgradeTool extends JFrame {
 										int nRead = 0;
 										if((nRead = fs.read(fileread)) != -1) {
 											PackageIndex ++;//package index, count from 1.
-											txData.type = ComPackage.TYPE_UPGRADE_DATA;
+											txData.type = TypePartnerX.TYPE_UPGRADE_DATA;
 											txData.addInteger(PackageIndex, 0);
 											txData.addByte((byte)nRead, 4);
 											txData.addBytes(fileread, ComPackage.FILE_DATA_CACHE, 5);

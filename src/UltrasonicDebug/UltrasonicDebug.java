@@ -67,6 +67,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 
 public class UltrasonicDebug extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -327,7 +328,7 @@ public class UltrasonicDebug extends JFrame {
 	}
 
 	private byte[] CreateSendBuffer() {
-		txData.type = ComPackage.TYPE_DEBUG_CMD;
+		txData.type = TypePartnerX.TYPE_DEBUG_CMD;
 		txData.addByte((byte) ValueSlider.getValue(), 0);
 		txData.addByte((byte) (ASW_EN.isSelected() ? 1 : 0), 1);
 		txData.addByte((byte) (SND_EN.isSelected() ? 1 : 0), 2);
@@ -445,10 +446,10 @@ public class UltrasonicDebug extends JFrame {
 				}
 				GotResponseFlag = true;
 				switch(rxData.type) {
-					case ComPackage.TYPE_UPGRADE_FC_ACK:
+					case TypePartnerX.TYPE_UPGRADE_FC_ACK:
 						debug_info.setText("fc firmware lost.");
 					break;
-					case ComPackage.TYPE_DIST_RAW_DAT:
+					case TypePartnerX.TYPE_DIST_RAW_DAT:
 						if(rxData.rData[0] == (byte)0xAE)
 							DisLab.setText(String.format("%.1fcm", rxData.readoutFloat(1)));
 					break;

@@ -49,6 +49,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.SerialTool;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
@@ -256,23 +257,23 @@ public class DSNWriter extends JFrame {
 		public void run() {
 			while(true) {
 				if(VersionReqFlag) {
-					txData.type = ComPackage.TYPE_VERSION_REQUEST;
+					txData.type = TypePartnerX.TYPE_VERSION_REQUEST;
 					txData.addByte((byte)0x0F, 0);
 					txData.setLength(3);
 				} else if(WriteNewDSNFlag) {
 					if(_wDSN_CmdTog % 2 == 0) {
-						txData.type = ComPackage.TYPE_DSN_UPDATE;
+						txData.type = TypePartnerX.TYPE_DSN_UPDATE;
 						txData.addBytes(_NewDSN.getBytes(), 16, 0);
 						txData.addByte((byte)0xBB, 16);
 						txData.setLength(19);
 					} else {
-						txData.type = ComPackage.TYPE_VERSION_REQUEST;
+						txData.type = TypePartnerX.TYPE_VERSION_REQUEST;
 						txData.addByte((byte)0x0F, 0);
 						txData.setLength(3);
 					}
 					_wDSN_CmdTog ++;
 				} else {
-					txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+					txData.type = TypePartnerX.TYPE_FC_APP_HEARTBEAT;
 					txData.addByte(HeartbatCnt, 0);
 					txData.setLength(3);
 					HeartbatCnt ++;
@@ -380,9 +381,9 @@ public class DSNWriter extends JFrame {
 					}
 				}
 				GotResponseFlag = true;
-				if(rxData.type == ComPackage.TYPE_UPGRADE_FC_ACK) {
+				if(rxData.type == TypePartnerX.TYPE_UPGRADE_FC_ACK) {
 					debug_info.setText("fc firmware lost.");
-				} else if(rxData.type == ComPackage.TYPE_VERSION_Response) {
+				} else if(rxData.type == TypePartnerX.TYPE_VERSION_Response) {
 					VersionReqFlag = false;
 					char ver = rxData.readoutCharacter(0);
 					debug_info.setText("Version: V" + (ver >> 12) + "." + ((ver >> 8) & 0x0F) + "." + (ver & 0x00FF));

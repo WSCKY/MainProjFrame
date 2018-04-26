@@ -47,6 +47,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.SerialTool;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
@@ -265,11 +266,11 @@ public class AccCalib extends JFrame{
 		public void run() {
 			while(true) {
 				if(CalibSendEnable == true) {
-					txData.type = ComPackage.TYPE_ACC_CALIBRATE;
-					txData.addByte(ComPackage.ACC_CALIBRATE_VERIFY, 0);
+					txData.type = TypePartnerX.TYPE_ACC_CALIBRATE;
+					txData.addByte(TypePartnerX.ACC_CALIBRATE_VERIFY, 0);
 					txData.setLength(3);
 				} else {
-					txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+					txData.type = TypePartnerX.TYPE_FC_APP_HEARTBEAT;
 					txData.addByte(HeartbatCnt, 0);
 					txData.setLength(3);
 					HeartbatCnt ++;
@@ -377,12 +378,12 @@ public class AccCalib extends JFrame{
 				}
 				GotResponseFlag = true;
 				switch(rxData.type) {
-					case ComPackage.TYPE_UPGRADE_FC_ACK:
+					case TypePartnerX.TYPE_UPGRADE_FC_ACK:
 						Info_lab.setText("·É¿Ø¹Ì¼þÒì³££¡");
 						InfoPanel.setBackground(new Color(250, 0, 0));
 						debug_info.setText("fc firmware lost.");
 					break;
-					case ComPackage.TYPE_ACC_CALIB_ACK:
+					case TypePartnerX.TYPE_ACC_CALIB_ACK:
 						int CalibSides = rxData.rData[0];
 						int CurrentSide = rxData.rData[1];
 						int CurrentProg = (rxData.rData[2] > 100) ? 100 : rxData.rData[2];

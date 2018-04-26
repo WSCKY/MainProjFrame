@@ -50,6 +50,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.SerialTool;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
@@ -417,7 +418,7 @@ public class FactoryTester extends JFrame {
 				synchronized(new String("")) {//unnecessary (copy).
 					try {
 						rxData = (ComPackage) RxAnalyse.RecPackage.PackageCopy();
-						if(rxData.type == ComPackage.TYPE_FC_Response) {
+						if(rxData.type == TypePartnerX.TYPE_FC_Response) {
 							if((rxData.rData[1] & 0x01) == 0x01) {
 								IMUSta.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("cha.png")).getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
 							} else {
@@ -457,7 +458,7 @@ public class FactoryTester extends JFrame {
 							RollText.setText(String.format("%.2f", rxData.readoutFloat(9)));
 							VelXText.setText(String.format("%.2f", rxData.readoutFloat(19)));
 							VelYText.setText(String.format("%.2f", rxData.readoutFloat(23)));
-						} else if(rxData.type == ComPackage.TYPE_VERSION_Response) {
+						} else if(rxData.type == TypePartnerX.TYPE_VERSION_Response) {
 							GotVersionFlag = true;
 							char ver = rxData.readoutCharacter(0);
 							VER_txt.setText("V" + (ver >> 12) + "." + ((ver >> 8) & 0x0F) + "." + (ver & 0x00FF));
@@ -478,17 +479,17 @@ public class FactoryTester extends JFrame {
 		public void run() {
 			while(true) {
 				if(ESCBurnInRunningFlag == true) {
-					txData.type = ComPackage.TYPE_ESC_BURN_IN_TEST;
+					txData.type = TypePartnerX.TYPE_ESC_BURN_IN_TEST;
 					txData.addByte((byte) 0, 0);//speed: 0%
 					txData.addByte((byte)(0 ^ 0xCC), 1);
 					txData.setLength(4);
 				} else if(GotVersionFlag == false) {
-					txData.type = ComPackage.TYPE_VERSION_REQUEST;
+					txData.type = TypePartnerX.TYPE_VERSION_REQUEST;
 					txData.addByte((byte)0x0F, 0);
 					txData.setLength(3);
 				} else {/* no operation */
-					txData.type = ComPackage.TYPE_DeviceCheckReq;
-					txData.addByte(ComPackage._dev_LED, 0);
+					txData.type = TypePartnerX.TYPE_DeviceCheckReq;
+					txData.addByte(TypePartnerX._dev_LED, 0);
 					txData.addByte(LEDValue, 1);
 					txData.addFloat(0.0f, 5);
 					txData.addByte((byte)0, 9);

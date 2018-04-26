@@ -57,6 +57,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 
 public class ImgDisplay extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -253,13 +254,13 @@ public class ImgDisplay extends JFrame{
 				if(UpdateTxBuffer) {
 					UpdateTxBuffer = false;
 					if(ReqNewImage == true) {
-						txData.type = ComPackage.TYPE_FLOW_IMG_Req;
-						txData.addByte((byte)ComPackage.FLOW_IMG_REQ_CMD, 0);
+						txData.type = TypePartnerX.TYPE_FLOW_IMG_Req;
+						txData.addByte((byte)TypePartnerX.FLOW_IMG_REQ_CMD, 0);
 						txData.setLength(3);
 						ReqNewImage = false;
 						SendDataEnabled = true;
 					} else if(AckForImgData == true) {
-						txData.type = ComPackage.TYPE_FLOW_IMG_Ack;
+						txData.type = TypePartnerX.TYPE_FLOW_IMG_Ack;
 						txData.addByte((byte)GotPacketID, 0);
 						txData.addByte((byte)64, 1);
 						txData.setLength(4);
@@ -375,7 +376,7 @@ public class ImgDisplay extends JFrame{
 				GotResponseFlag = true;
 				debug_info.setText("connected.");
 				switch(rxData.type) {
-					case ComPackage.TYPE_FLOW_IMG_DAT:
+					case TypePartnerX.TYPE_FLOW_IMG_DAT:
 						GotPacketID = rxData.rData[0];
 						for(int i = 0; i < 64; i ++) {
 							Val_Y[(GotPacketID & 0xFF)][i] = (int)(rxData.rData[i + 2] & 0xFF);

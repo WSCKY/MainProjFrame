@@ -45,6 +45,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
 import SerialTool.serialException.PortInUse;
@@ -237,13 +238,13 @@ public class VoltCalib extends JFrame{
 	private class TxDataThread implements Runnable {
 		public void run() {
 			while(true) {
-				if(VoltCalibState == ComPackage.ADC_CALIBRATE_H || VoltCalibState == ComPackage.ADC_CALIBRATE_L) {
-					txData.type = ComPackage.TYPE_ADC_CALIBRATE;
+				if(VoltCalibState == TypePartnerX.ADC_CALIBRATE_H || VoltCalibState == TypePartnerX.ADC_CALIBRATE_L) {
+					txData.type = TypePartnerX.TYPE_ADC_CALIBRATE;
 					txData.addByte(VoltCalibState, 0);
 					txData.addByte((byte)(VoltCalibState ^ 0xAA), 1);
 					txData.setLength(4);
 				} else {
-					txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+					txData.type = TypePartnerX.TYPE_FC_APP_HEARTBEAT;
 					txData.addByte(HeartbatCnt, 0);
 					txData.setLength(3);
 					HeartbatCnt ++;
@@ -351,10 +352,10 @@ public class VoltCalib extends JFrame{
 				}
 				GotResponseFlag = true;
 				switch(rxData.type) {
-					case ComPackage.TYPE_UPGRADE_FC_ACK:
+					case TypePartnerX.TYPE_UPGRADE_FC_ACK:
 						debug_info.setText("fc firmware lost.");
 					break;
-					case ComPackage.TYPE_ADC_CALIB_ACK:
+					case TypePartnerX.TYPE_ADC_CALIB_ACK:
 						if(rxData.rData[2] != 0x0) { /* Exception. */
 							Calib_H.setEnabled(true);
 							Calib_L.setEnabled(true);
@@ -371,7 +372,7 @@ public class VoltCalib extends JFrame{
 								JOptionPane.showMessageDialog(null, "未知错误！", "error!", JOptionPane.ERROR_MESSAGE);
 						} else {
 							VoltCalBar.setValue(rxData.rData[1]);
-							VoltCalBar.setString((rxData.rData[0] == ComPackage.ADC_CALIBRATE_H ? "H" : "L") + " Sampling ..." + rxData.rData[1] + "%");
+							VoltCalBar.setString((rxData.rData[0] == TypePartnerX.ADC_CALIBRATE_H ? "H" : "L") + " Sampling ..." + rxData.rData[1] + "%");
 							if(rxData.rData[1] >= 100) {//complete.
 								Calib_H.setEnabled(true);
 								Calib_L.setEnabled(true);
@@ -384,7 +385,7 @@ public class VoltCalib extends JFrame{
 							}
 						}
 					break;
-					case ComPackage.TYPE_FC_Response:
+					case TypePartnerX.TYPE_FC_Response:
 						int val = rxData.rData[14] & 0xFF;
 						VoltVal.setText(String.format("%.2f V", ((float)val + 640.0)/71.0));
 						if(VoltCalibStartFlag == false) {
@@ -444,10 +445,10 @@ public class VoltCalib extends JFrame{
 				Calib_L.setEnabled(false);
 				VoltCalibStartFlag = true;
 				if(name.equals("高压校准")) {
-					VoltCalibReqVal = ComPackage.ADC_CALIBRATE_H;
+					VoltCalibReqVal = TypePartnerX.ADC_CALIBRATE_H;
 					debug_info.setText("high level calibration.");
 				} else if(name.equals("低压校准")) {
-					VoltCalibReqVal = ComPackage.ADC_CALIBRATE_L;
+					VoltCalibReqVal = TypePartnerX.ADC_CALIBRATE_L;
 					debug_info.setText("low level calibration.");
 				}
 				new Thread(new VoltSampleWaitThread()).start();

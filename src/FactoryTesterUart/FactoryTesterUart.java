@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -360,7 +361,7 @@ public class FactoryTesterUart extends JFrame {
 									synchronized(new String("")) {//unnecessary (copy).
 										try {
 											rxData = (ComPackage) RxAnalyse.RecPackage.PackageCopy();
-											if(rxData.type == ComPackage.TYPE_FC_Response) {
+											if(rxData.type == TypePartnerX.TYPE_FC_Response) {
 												if((rxData.rData[1] & 0x01) == 0x01) {
 													IMUSta.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("cha.png")).getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)));
 												} else {
@@ -400,7 +401,7 @@ public class FactoryTesterUart extends JFrame {
 												RollText.setText(String.format("%.2f", rxData.readoutFloat(9)));
 												VelXText.setText(String.format("%.2f", rxData.readoutFloat(19)));
 												VelYText.setText(String.format("%.2f", rxData.readoutFloat(23)));
-											} else if(rxData.type == ComPackage.TYPE_VERSION_Response) {
+											} else if(rxData.type == TypePartnerX.TYPE_VERSION_Response) {
 												GotVersionFlag = true;
 												char ver = rxData.readoutCharacter(0);
 												VER_txt.setText("V" + (ver >> 12) + "." + ((ver >> 8) & 0x0F) + "." + (ver & 0x00FF));
@@ -418,7 +419,7 @@ public class FactoryTesterUart extends JFrame {
 														dsnGenerator.SaveThisDSN();
 													}
 												}
-											} else if(rxData.type == ComPackage.TYPE_ADC_CALIB_ACK) {
+											} else if(rxData.type == TypePartnerX.TYPE_ADC_CALIB_ACK) {
 												if(rxData.rData[2] != 0x0) { /* Exception. */
 													Calib_H.setEnabled(true);
 													Calib_L.setEnabled(true);
@@ -435,7 +436,7 @@ public class FactoryTesterUart extends JFrame {
 														JOptionPane.showMessageDialog(null, "Î´Öª´íÎó£¡", "error!", JOptionPane.ERROR_MESSAGE);
 												} else {
 													VoltCalBar.setValue(rxData.rData[1]);
-													VoltCalBar.setString((rxData.rData[0] == ComPackage.ADC_CALIBRATE_H ? "H" : "L") + " Sampling ..." + rxData.rData[1] + "%");
+													VoltCalBar.setString((rxData.rData[0] == TypePartnerX.ADC_CALIBRATE_H ? "H" : "L") + " Sampling ..." + rxData.rData[1] + "%");
 													if(rxData.rData[1] >= 100) {//complete.
 														Calib_H.setEnabled(true);
 														Calib_L.setEnabled(true);
@@ -469,35 +470,35 @@ public class FactoryTesterUart extends JFrame {
 	private class UpgradeTxThread implements Runnable {
 		public void run() {
 			while(true) {
-				if(VoltCalibState == ComPackage.ADC_CALIBRATE_H || VoltCalibState == ComPackage.ADC_CALIBRATE_L) {
-					txData.type = ComPackage.TYPE_ADC_CALIBRATE;
+				if(VoltCalibState == TypePartnerX.ADC_CALIBRATE_H || VoltCalibState == TypePartnerX.ADC_CALIBRATE_L) {
+					txData.type = TypePartnerX.TYPE_ADC_CALIBRATE;
 					txData.addByte(VoltCalibState, 0);
 					txData.addByte((byte)(VoltCalibState ^ 0xAA), 1);
 					txData.setLength(4);
 				} else if(ESCBurnInRunningFlag == true) {
-					txData.type = ComPackage.TYPE_ESC_BURN_IN_TEST;
+					txData.type = TypePartnerX.TYPE_ESC_BURN_IN_TEST;
 					txData.addByte(ESCBurnExpSpeed, 0);
 					txData.addByte((byte)(ESCBurnExpSpeed ^ 0xCC), 1);
 					txData.setLength(4);
 				} else if(GotVersionFlag == false) {
-					txData.type = ComPackage.TYPE_VERSION_REQUEST;
+					txData.type = TypePartnerX.TYPE_VERSION_REQUEST;
 					txData.addByte((byte)0x0F, 0);
 					txData.setLength(3);
 				} else if(WriteNewDSNFlag == true) {
 					if(_wDSN_CmdTog % 2 == 0) {
-						txData.type = ComPackage.TYPE_DSN_UPDATE;
+						txData.type = TypePartnerX.TYPE_DSN_UPDATE;
 						txData.addBytes(_NewDSN.getBytes(), 16, 0);
 						txData.addByte((byte)0xBB, 16);
 						txData.setLength(19);
 					} else {
-						txData.type = ComPackage.TYPE_VERSION_REQUEST;
+						txData.type = TypePartnerX.TYPE_VERSION_REQUEST;
 						txData.addByte((byte)0x0F, 0);
 						txData.setLength(3);
 					}
 					_wDSN_CmdTog ++;
 				} else {/* no operation */
-					txData.type = ComPackage.TYPE_DeviceCheckReq;
-					txData.addByte(ComPackage._dev_LED, 0);
+					txData.type = TypePartnerX.TYPE_DeviceCheckReq;
+					txData.addByte(TypePartnerX._dev_LED, 0);
 					txData.addByte(LEDValue, 1);
 					txData.addFloat(0.0f, 5);
 					txData.addByte((byte)0, 9);
@@ -569,7 +570,7 @@ public class FactoryTesterUart extends JFrame {
 				Calib_L.setEnabled(false);
 				MotorStartBtn.setEnabled(false);
 				VoltCalibStartFlag = true;
-				VoltCalibReqVal = ComPackage.ADC_CALIBRATE_H;
+				VoltCalibReqVal = TypePartnerX.ADC_CALIBRATE_H;
 				new Thread(new VoltSampleWaitThread()).start();
 			}
 		}
@@ -582,7 +583,7 @@ public class FactoryTesterUart extends JFrame {
 				Calib_L.setEnabled(false);
 				MotorStartBtn.setEnabled(false);
 				VoltCalibStartFlag = true;
-				VoltCalibReqVal = ComPackage.ADC_CALIBRATE_L;
+				VoltCalibReqVal = TypePartnerX.ADC_CALIBRATE_L;
 				new Thread(new VoltSampleWaitThread()).start();
 			}
 		}

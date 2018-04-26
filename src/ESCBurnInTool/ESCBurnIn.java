@@ -51,6 +51,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
+import protocol.PackageTypes.TypePartnerX;
 import SerialTool.SerialTool;
 import SerialTool.serialException.NoSuchPort;
 import SerialTool.serialException.NotASerialPort;
@@ -289,12 +290,12 @@ public class ESCBurnIn extends JFrame{
 		public void run() {
 			while(true) {
 				if(ESCBurnInRunningFlag == true) {
-					txData.type = ComPackage.TYPE_ESC_BURN_IN_TEST;
+					txData.type = TypePartnerX.TYPE_ESC_BURN_IN_TEST;
 					txData.addByte(ESCBurnExpSpeed, 0);
 					txData.addByte((byte)(ESCBurnExpSpeed ^ 0xCC), 1);
 					txData.setLength(4);
 				} else {
-					txData.type = ComPackage.TYPE_FC_APP_HEARTBEAT;
+					txData.type = TypePartnerX.TYPE_FC_APP_HEARTBEAT;
 					txData.addByte(HeartbatCnt, 0);
 					txData.setLength(3);
 					HeartbatCnt ++;
@@ -402,7 +403,7 @@ public class ESCBurnIn extends JFrame{
 				}
 				GotResponseFlag = true;
 				switch(rxData.type) {
-					case ComPackage.TYPE_UPGRADE_FC_ACK:
+					case TypePartnerX.TYPE_UPGRADE_FC_ACK:
 						debug_info.setText("fc firmware lost.");
 					break;
 					default:
