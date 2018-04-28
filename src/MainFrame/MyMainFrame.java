@@ -309,7 +309,7 @@ public class MyMainFrame extends JFrame {
 					try {
 						CommSocket.receive(packet);
 					} catch (IOException e) {
-						e.printStackTrace();
+						System.err.println("UDP Socket Receive Exception.");
 					}
 					byte[] recData = packet.getData();
 					RxDataPreProcess(recData, packet.getLength());
@@ -544,6 +544,7 @@ public class MyMainFrame extends JFrame {
 			}
 			if(CommSocket != null) {
 				CommSocket.close();
+				CommSocket = null;
 			}
 			System.exit(0);
 		}
