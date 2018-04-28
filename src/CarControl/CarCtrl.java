@@ -1,15 +1,13 @@
 package CarControl;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.KeyEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
@@ -17,42 +15,34 @@ import MainFrame.MyMainFrame;
 public class CarCtrl extends MyMainFrame {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JPanel MainPanel = null;
-	private JPanel CtrlPanel = new JPanel();
-	private JPanel VelhPanel = new JPanel();
-	
-	private JPanel FrontPanel = new JPanel(); private JButton FrontBtn = new JButton();
-	private JPanel BackPanel = new JPanel(); private JButton BackBtn = new JButton();
-	private JPanel LeftPanel = new JPanel(); private JButton LeftBtn = new JButton();
-	private JPanel RightPanel = new JPanel(); private JButton RightBtn = new JButton();
-	
+	private JTabbedPane TabPanel = null;
+
+	private JPanel Panel_Normal = new JPanel();
+	private JProgressBar ProgBarA = new JProgressBar(JProgressBar.VERTICAL, -100, 100);
+	private JProgressBar ProgBarB = new JProgressBar(JProgressBar.VERTICAL, -100, 100);
+
+	private JPanel Panel_Debug = new JPanel();
+
+	private JPanel Panel_Status = new JPanel();
+
 	public CarCtrl() {
 		this.setFrameSize(700, 450);
 		MainPanel = this.getUsrMainPanel();
-		MainPanel.setLayout(new GridLayout(1, 2, 10, 10));
-		
-		CtrlPanel.setLayout(new GridLayout(3, 3, 5, 5));
-		CtrlPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		FrontPanel.setLayout(new BorderLayout());//(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		BackPanel.setLayout(new BorderLayout());//(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		LeftPanel.setLayout(new BorderLayout());//(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		RightPanel.setLayout(new BorderLayout());//(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		FrontBtn.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("forward.png")).getImage().getScaledInstance(60, 90, Image.SCALE_DEFAULT)));
-		LeftBtn.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("left.png")).getImage().getScaledInstance(90, 60, Image.SCALE_DEFAULT)));
-		RightBtn.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("right.png")).getImage().getScaledInstance(90, 60, Image.SCALE_DEFAULT)));
-		BackBtn.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("backward.png")).getImage().getScaledInstance(60, 90, Image.SCALE_DEFAULT)));
-		FrontPanel.add(FrontBtn); BackPanel.add(BackBtn); LeftPanel.add(LeftBtn); RightPanel.add(RightBtn);
-		FrontPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		BackPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		LeftPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		RightPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		CtrlPanel.add(new JPanel()); CtrlPanel.add(FrontPanel); CtrlPanel.add(new JPanel());
-		CtrlPanel.add(LeftPanel); CtrlPanel.add(new JPanel()); CtrlPanel.add(RightPanel);
-		CtrlPanel.add(new JPanel()); CtrlPanel.add(BackPanel); CtrlPanel.add(new JPanel());
-		
-		MainPanel.add(CtrlPanel);
-		MainPanel.add(VelhPanel);
+		MainPanel.setLayout(new BorderLayout());
+
+		ProgBarA.setValue(0); ProgBarB.setValue(0);
+		ProgBarA.setPreferredSize(new Dimension(40, 200));
+		ProgBarB.setPreferredSize(new Dimension(40, 200));
+		Panel_Normal.add(ProgBarA); Panel_Normal.add(ProgBarB);
+
+		TabPanel = new JTabbedPane(JTabbedPane.LEFT);
+		TabPanel.setFont(new Font("Courier", Font.PLAIN, 20));
+		TabPanel.add(" Normal ", Panel_Normal); TabPanel.setMnemonicAt(0, KeyEvent.VK_1);
+		TabPanel.add(" Debug ", Panel_Debug); TabPanel.setMnemonicAt(1, KeyEvent.VK_2);
+		TabPanel.add(" Status ", Panel_Status); TabPanel.setMnemonicAt(2, KeyEvent.VK_3);
+		MainPanel.add(TabPanel, BorderLayout.CENTER);
 
 		this.setVisible(true);
 		this.setAutoTxEnable(true);
