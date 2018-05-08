@@ -28,5 +28,7 @@
      16  tftpFileTransfer          TFTP文件传输上位机(未完成)
      17  UltrasonicModuleDebugger  超声波测距模块调试工具
 ```
+#### 资源地址：
+http://rxtx.qbang.org/wiki/index.php/Download
 
                                               kyChu@2017/12/8
