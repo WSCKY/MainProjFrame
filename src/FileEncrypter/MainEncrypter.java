@@ -268,7 +268,8 @@ public class MainEncrypter extends JFrame {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Preferences perf_info = Preferences.userRoot().node("kyChuLicenseDate");
 		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
@@ -300,9 +301,9 @@ public class MainEncrypter extends JFrame {
 			if(!perf_info.get("_license_key", "").equals("_kychu_permit")) {
 				int DaysUsed = (int) ((CurrentTime.getTime() - FirstDate.getTime()) / 86400000);
 				if(DaysUsed < 15 && DaysUsed >= 0)
-					JOptionPane.showMessageDialog(null, "Èí¼þÎ´»ñÊÚÈ¨£¡ ÊÔÓÃÆÚÊ£Óà\n   " + (15 - DaysUsed) + " Ìì!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½\n   " + (15 - DaysUsed) + " ï¿½ï¿½!", "Attention", JOptionPane.INFORMATION_MESSAGE);
 				else {
-					JOptionPane.showMessageDialog(null, "Èí¼þÎ´»ñÊÚÈ¨£¡ ÊÔÓÃÆÚÊ£Óà\n   0 Ìì!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½\n   0 ï¿½ï¿½!", "Attention", JOptionPane.INFORMATION_MESSAGE);
 					System.exit(0);
 				}
 			}
