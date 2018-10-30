@@ -64,6 +64,11 @@ public class RoadPainter extends MyMainFrame {
 					}
 				}
 				DrawSignPoint(img.getGraphics(), pTest);
+//				Drawer.display();
+				if(Drawer.getFreshState())
+					Drawer.FreshEnable(false);
+				else
+					Drawer.FreshEnable(true);
 				try {
 					TimeUnit.SECONDS.sleep(1);
 				} catch (InterruptedException e) {
@@ -119,15 +124,34 @@ public class RoadPainter extends MyMainFrame {
 class myPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
+	private Graphics g;
 	private Image img;
+	private boolean _fresh = true;
 	public myPanel() {}
 	public void setImage(Image img) {
 		if(img != null) {
 			this.img = img;
+			g = this.img.getGraphics();
 		}
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(img, 0, 0, this);
+		if(_fresh)
+			g.drawImage(img, 0, 0, this);
+	}
+
+	public void FreshEnable(boolean isEnable) {
+		_fresh = isEnable;
+	}
+	
+	public boolean getFreshState() {
+		return _fresh;
+	}
+	
+	public void display() {
+		if(g != null) {
+			super.paint(g);
+			this.repaint();
+		}
 	}
 }
