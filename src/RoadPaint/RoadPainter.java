@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +47,9 @@ public class RoadPainter extends MyMainFrame {
 
 		pCross[0] = new Point2D.Double(0, 0);
 		pCross[1] = new Point2D.Double(0, 0);
+		
+		this.addMouseListener(ml);
+		this.addMouseMotionListener(ml);
 
 		new Thread(new TestThread()).start();
 	}
@@ -128,6 +133,20 @@ public class RoadPainter extends MyMainFrame {
 		return new Point(p.x + off_x, p.y + off_y);
 	}
 
+	int xStart = 0, yStart = 0;
+	MouseAdapter ml = new MouseAdapter() {
+		public void mousePressed(MouseEvent e) {
+			xStart = e.getX();
+			yStart = e.getY();
+		}
+		public void mouseDragged(MouseEvent e) {
+			Drawer.setImgOffset(e.getX() - xStart, e.getY() - yStart);
+		}
+		public void mouseReleased(MouseEvent e) {
+			Drawer.applyOffset();
+		}
+	};
+
 //int ta1 = 100, ta2 = 80, ta3 = 80;
 //double deg = 0;
 //	public void MainPaint(Graphics g) {
@@ -200,14 +219,26 @@ class myPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private Image img;
+	private int xOffset = 0, yOffset = 0;
+	private int xMove = 0, yMove = 0;
 	public myPanel() {}
 	public void setImage(Image img) {
 		if(img != null) {
 			this.img = img;
 		}
 	}
+	public void setImgOffset(int x, int y) {
+		xMove = x;
+		yMove = y;
+	}
+	public void applyOffset() {
+		xOffset += xMove;
+		yOffset += yMove;
+		xMove = 0;
+		yMove = 0;
+	}
 
 	public void paintComponent(Graphics g) {
-		g.drawImage(img, 0, 0, this);
+		g.drawImage(img, xOffset + xMove, yOffset + yMove, this);
 	}
 }
