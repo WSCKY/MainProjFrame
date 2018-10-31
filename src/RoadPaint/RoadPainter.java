@@ -53,9 +53,10 @@ public class RoadPainter extends MyMainFrame {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			testTril(gPointer);
 			while(true) {
 //				MainPaint(gPointer);
+				testUpdate();
+				testTril(gPointer);
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -87,8 +88,16 @@ public class RoadPainter extends MyMainFrame {
 		return d;
 	}
 
+	Point ExpPoint = new Point(0, 0);
+	int degree = 0;
+	public void testUpdate() {
+		degree += 8; if(degree >= 360) degree -= 360;
+		ExpPoint.x = (int) (100 + 30 * Math.sin(Math.toRadians(degree)));
+		ExpPoint.y = (int) (100 + 30 * Math.cos(Math.toRadians(degree)));
+	}
+
 	int dist = 150;
-	int r0 = 90, rx = 120, ry = 92;
+	int r0 = 0, rx = 0, ry = 0;
 	public void testTril(Graphics g) {
 		g.setColor(backColor);
 		g.fillRect(0, 0, PainterWidth, PainterHeight);
@@ -101,6 +110,9 @@ public class RoadPainter extends MyMainFrame {
 		Point yPoint = new Point(0, dist);
 		DrawSignPoint(g, offPoint(yPoint));
 		DrawLine(g, offPoint(OrgPoint), offPoint(yPoint));
+		r0 = (int) distance(ExpPoint, OrgPoint) + 5;
+		rx = (int) distance(ExpPoint, xPoint) + 5;
+		ry = (int) distance(ExpPoint, yPoint) + 5;
 		myCircle c0 = new myCircle(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0); DrawCircle(g, c0);
 		myCircle cx = new myCircle(offPoint(xPoint).x, offPoint(xPoint).y, rx); DrawCircle(g, cx);
 		myCircle cy = new myCircle(offPoint(yPoint).x, offPoint(yPoint).y, ry); DrawCircle(g, cy);
@@ -116,39 +128,39 @@ public class RoadPainter extends MyMainFrame {
 		return new Point(p.x + off_x, p.y + off_y);
 	}
 
-int ta1 = 100, ta2 = 80, ta3 = 80;
-double deg = 0;
-	public void MainPaint(Graphics g) {
-		g.setColor(backColor);
-		g.fillRect(0, 0, PainterWidth, PainterHeight);
-		g.setColor(Color.BLUE);
-		Point OrgPoint = new Point(this.getWidth() / 2, this.getHeight() / 2);
-		DrawSignPoint(g, OrgPoint);
-		deg += 8;
-		if(deg >= 360) deg -= 360;
-		ta1 = (int) (100 + 30 * Math.sin(Math.toRadians(deg)));
-		ta2 = (int) (80 + 30 * Math.cos(Math.toRadians(deg)));
-		ta3 = (int) (80 + 30 * Math.sin(Math.toRadians(deg + 45)));
-		Point AncPoint1 = new Point(OrgPoint.x, OrgPoint.y - ta1);
-		DrawSignPoint(g, AncPoint1);
-		g.setColor(Color.red);
-		g.drawLine(OrgPoint.x, OrgPoint.y, OrgPoint.x, OrgPoint.y - ta1);
-		myCircle c1 = new myCircle(OrgPoint.x, OrgPoint.y, ta2);
-		myCircle c2 = new myCircle(AncPoint1.x, AncPoint1.y, ta3);
-//		DrawCircle(g, c1);
-//		DrawCircle(g, c2);
-		int idx = c1.CrossCircle(c2, pCross);
-		if(idx >= 1) {
-			DrawSignPoint(g, new Point((int)pCross[0].x, (int)pCross[0].y));
-			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y));
-			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
-		}
-		if(idx == 2) {
-			DrawSignPoint(g, new Point((int)pCross[1].x, (int)pCross[1].y));
-			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y));
-			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
-		}
-	}
+//int ta1 = 100, ta2 = 80, ta3 = 80;
+//double deg = 0;
+//	public void MainPaint(Graphics g) {
+//		g.setColor(backColor);
+//		g.fillRect(0, 0, PainterWidth, PainterHeight);
+//		g.setColor(Color.BLUE);
+//		Point OrgPoint = new Point(this.getWidth() / 2, this.getHeight() / 2);
+//		DrawSignPoint(g, OrgPoint);
+//		deg += 8;
+//		if(deg >= 360) deg -= 360;
+//		ta1 = (int) (100 + 30 * Math.sin(Math.toRadians(deg)));
+//		ta2 = (int) (80 + 30 * Math.cos(Math.toRadians(deg)));
+//		ta3 = (int) (80 + 30 * Math.sin(Math.toRadians(deg + 45)));
+//		Point AncPoint1 = new Point(OrgPoint.x, OrgPoint.y - ta1);
+//		DrawSignPoint(g, AncPoint1);
+//		g.setColor(Color.red);
+//		g.drawLine(OrgPoint.x, OrgPoint.y, OrgPoint.x, OrgPoint.y - ta1);
+//		myCircle c1 = new myCircle(OrgPoint.x, OrgPoint.y, ta2);
+//		myCircle c2 = new myCircle(AncPoint1.x, AncPoint1.y, ta3);
+////		DrawCircle(g, c1);
+////		DrawCircle(g, c2);
+//		int idx = c1.CrossCircle(c2, pCross);
+//		if(idx >= 1) {
+//			DrawSignPoint(g, new Point((int)pCross[0].x, (int)pCross[0].y));
+//			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y));
+//			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
+//		}
+//		if(idx == 2) {
+//			DrawSignPoint(g, new Point((int)pCross[1].x, (int)pCross[1].y));
+//			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y));
+//			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
+//		}
+//	}
 	public void DrawSignPoint(Graphics g, Point p) {
 		Color org_color = g.getColor();
 		g.setColor(Color.BLUE);
@@ -167,6 +179,10 @@ double deg = 0;
 		g.setColor(Color.RED);
 		g.drawLine(p1.x, p1.y, p2.x, p2.y);
 		g.setColor(org_color);
+	}
+
+	public double distance(Point px, Point py) {
+		return Math.sqrt((px.x - py.x) * (px.x - py.x) + (px.y - py.y) * (px.y - py.y));
 	}
 
 	public static void main(String[] args) {
