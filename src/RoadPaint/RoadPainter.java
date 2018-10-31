@@ -1,13 +1,10 @@
 package RoadPaint;
 
-//import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +21,10 @@ public class RoadPainter extends MyMainFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final int PainterWidth = 1000;
+	private static final int PainterHeight = 600;
+	private static final Color backColor = new Color(180, 180, 180);
+
 	private JPanel MainPanel = null;
 	private Image img = null;
 	private Graphics gPointer = null;
@@ -32,11 +33,11 @@ public class RoadPainter extends MyMainFrame {
 	private Point2D.Double[] pCross = new Point2D.Double[2];
 
 	public RoadPainter() {
-		this.setFrameSize(1000, 600);
+		this.setFrameSize(PainterWidth, PainterHeight);
 		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new BorderLayout());
 		MainPanel.add(Drawer, BorderLayout.CENTER);
-		img = new BufferedImage(1000, 600, BufferedImage.TYPE_INT_RGB);
+		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_INT_RGB);
 		Drawer.setImage(img);
 		gPointer = img.getGraphics();
 		this.setResizable(true);
@@ -49,28 +50,14 @@ public class RoadPainter extends MyMainFrame {
 	}
 	
 	private class TestThread implements Runnable {
-		private Point pTest = new Point(0, 60);
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			MainPaint(gPointer);
+			testTril(gPointer);
 			while(true) {
-				pTest.x += 60;
-				if(pTest.x >= 600) {
-					pTest.x = 60;
-					pTest.y += 60;
-					if(pTest.y >= 600) {
-						pTest.y = 60;
-					}
-				}
-				DrawSignPoint(img.getGraphics(), pTest);
-//				Drawer.display();
-				if(Drawer.getFreshState())
-					Drawer.FreshEnable(false);
-				else
-					Drawer.FreshEnable(true);
+//				MainPaint(gPointer);
 				try {
-					TimeUnit.SECONDS.sleep(1);
+					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -79,34 +66,106 @@ public class RoadPainter extends MyMainFrame {
 		}
 	}
 
+	public double[] CompPosition(double x1, double y1, double d1,
+            double x2, double y2, double d2,
+            double x3, double y3, double d3) {
+		double[] d = {0.0, 0.0};
+		double a11 = 2 * (x1 - x3);
+		double a12 = 2 * (y1 - y3);
+		double b1 = Math.pow(x1, 2) - Math.pow(x3, 2)
+		+ Math.pow(y1, 2) - Math.pow(y3, 2)
+		+ Math.pow(d3, 2) - Math.pow(d1, 2);
+		double a21 = 2 * (x2 - x3);
+		double a22 = 2 * (y2 - y3);
+		double b2 = Math.pow(x2, 2) - Math.pow(x3, 2)
+		+ Math.pow(y2, 2) - Math.pow(y3, 2)
+		+ Math.pow(d3, 2) - Math.pow(d2, 2);
+		
+		d[0] = (b1 * a22 - a12 * b2) / (a11 * a22 - a12 * a21);
+		d[1] = (a11 * b2 - b1 * a21) / (a11 * a22 - a12 * a21);
+		
+		return d;
+	}
+
+	int dist = 150;
+	int r0 = 90, rx = 120, ry = 92;
+	public void testTril(Graphics g) {
+		g.setColor(backColor);
+		g.fillRect(0, 0, PainterWidth, PainterHeight);
+		g.setColor(Color.BLUE);
+		Point OrgPoint = new Point(0, 0);
+		DrawSignPoint(g, offPoint(OrgPoint));
+		Point xPoint = new Point(dist, 0);
+		DrawSignPoint(g, offPoint(xPoint));
+		DrawLine(g, offPoint(OrgPoint), offPoint(xPoint));
+		Point yPoint = new Point(0, dist);
+		DrawSignPoint(g, offPoint(yPoint));
+		DrawLine(g, offPoint(OrgPoint), offPoint(yPoint));
+		myCircle c0 = new myCircle(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0); DrawCircle(g, c0);
+		myCircle cx = new myCircle(offPoint(xPoint).x, offPoint(xPoint).y, rx); DrawCircle(g, cx);
+		myCircle cy = new myCircle(offPoint(yPoint).x, offPoint(yPoint).y, ry); DrawCircle(g, cy);
+		double[] ret = CompPosition(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0,
+				offPoint(xPoint).x, offPoint(xPoint).y, rx,
+				offPoint(yPoint).x, offPoint(yPoint).y, ry);
+		DrawSignPoint(g, new Point((int)ret[0], (int)ret[1]));
+	}
+	
+	public Point offPoint(Point p) {
+		int off_x = 300;
+		int off_y = 200;
+		return new Point(p.x + off_x, p.y + off_y);
+	}
+
+int ta1 = 100, ta2 = 80, ta3 = 80;
+double deg = 0;
 	public void MainPaint(Graphics g) {
+		g.setColor(backColor);
+		g.fillRect(0, 0, PainterWidth, PainterHeight);
 		g.setColor(Color.BLUE);
 		Point OrgPoint = new Point(this.getWidth() / 2, this.getHeight() / 2);
 		DrawSignPoint(g, OrgPoint);
-		int ta1 = 100, ta2 = 80, ta3 = 80;
+		deg += 8;
+		if(deg >= 360) deg -= 360;
+		ta1 = (int) (100 + 30 * Math.sin(Math.toRadians(deg)));
+		ta2 = (int) (80 + 30 * Math.cos(Math.toRadians(deg)));
+		ta3 = (int) (80 + 30 * Math.sin(Math.toRadians(deg + 45)));
 		Point AncPoint1 = new Point(OrgPoint.x, OrgPoint.y - ta1);
 		DrawSignPoint(g, AncPoint1);
 		g.setColor(Color.red);
 		g.drawLine(OrgPoint.x, OrgPoint.y, OrgPoint.x, OrgPoint.y - ta1);
 		myCircle c1 = new myCircle(OrgPoint.x, OrgPoint.y, ta2);
 		myCircle c2 = new myCircle(AncPoint1.x, AncPoint1.y, ta3);
-		DrawCircle(g, c1);
-		DrawCircle(g, c2);
+//		DrawCircle(g, c1);
+//		DrawCircle(g, c2);
 		int idx = c1.CrossCircle(c2, pCross);
-		if(idx >= 1) DrawSignPoint(g, new Point((int)pCross[0].x, (int)pCross[0].y));
-		if(idx == 2) DrawSignPoint(g, new Point((int)pCross[1].x, (int)pCross[1].y));
+		if(idx >= 1) {
+			DrawSignPoint(g, new Point((int)pCross[0].x, (int)pCross[0].y));
+			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y));
+			DrawLine(g, new Point((int)pCross[0].x, (int)pCross[0].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
+		}
+		if(idx == 2) {
+			DrawSignPoint(g, new Point((int)pCross[1].x, (int)pCross[1].y));
+			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y));
+			DrawLine(g, new Point((int)pCross[1].x, (int)pCross[1].y), new Point(OrgPoint.x, OrgPoint.y - ta1));
+		}
 	}
 	public void DrawSignPoint(Graphics g, Point p) {
 		Color org_color = g.getColor();
 		g.setColor(Color.BLUE);
 		g.fillArc(p.x - 5, p.y - 5, 10, 10, 0, 360);
-		g.drawString("("+ p.x + ", " + p.y + ")", p.x, p.y);
+		g.drawString("("+ p.x + ", " + p.y + ")", p.x - 25, p.y - 5);
 		g.setColor(org_color);
 	}
 	public void DrawCircle(Graphics g, myCircle c) {
 		Color org_color = g.getColor();
 		g.setColor(Color.RED);
 		g.drawArc((int)(c.getX() - c.getRadius()), (int)(c.getY() - c.getRadius()), (int)c.getRadius() * 2, (int)c.getRadius() * 2, 0, 360);
+		g.setColor(org_color);
+	}
+	public void DrawLine(Graphics g, Point p1, Point p2) {
+		Color org_color = g.getColor();
+		g.setColor(Color.RED);
+		g.drawLine(p1.x, p1.y, p2.x, p2.y);
 		g.setColor(org_color);
 	}
 
@@ -124,34 +183,15 @@ public class RoadPainter extends MyMainFrame {
 class myPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private Graphics g;
 	private Image img;
-	private boolean _fresh = true;
 	public myPanel() {}
 	public void setImage(Image img) {
 		if(img != null) {
 			this.img = img;
-			g = this.img.getGraphics();
 		}
 	}
 
-	public void paint(Graphics g) {
-		if(_fresh)
-			g.drawImage(img, 0, 0, this);
-	}
-
-	public void FreshEnable(boolean isEnable) {
-		_fresh = isEnable;
-	}
-	
-	public boolean getFreshState() {
-		return _fresh;
-	}
-	
-	public void display() {
-		if(g != null) {
-			super.paint(g);
-			this.repaint();
-		}
+	public void paintComponent(Graphics g) {
+		g.drawImage(img, 0, 0, this);
 	}
 }
