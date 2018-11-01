@@ -30,6 +30,7 @@ public class RoadPainter extends MyMainFrame {
 	private myCanvas Drawer = new myCanvas();
 	
 	private myVehicle myTag = null;
+	private myVehicle myTag_1 = null;
 
 	public RoadPainter() {
 		this.setFrameSize(PainterWidth, PainterHeight);
@@ -41,6 +42,8 @@ public class RoadPainter extends MyMainFrame {
 		gPointer = img.getGraphics();
 		myTag = new myVehicle(gPointer);
 		myTag.update();
+		myTag_1 = new myVehicle(gPointer);
+		myTag_1.update();
 
 		this.setResizable(true);
 		this.setVisible(true);
@@ -56,6 +59,7 @@ public class RoadPainter extends MyMainFrame {
 				testUpdate();
 				testTril(gPointer);
 				myTag.update();
+				myTag_1.update();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -123,6 +127,7 @@ public class RoadPainter extends MyMainFrame {
 				offPoint(xPoint).x, offPoint(xPoint).y, rx,
 				offPoint(yPoint).x, offPoint(yPoint).y, ry);
 		myTag.moveTo((int)ret[0], (int)ret[1]);
+		myTag_1.moveTo((int)ret[0] + 30, (int)ret[1] + 30);
 	}
 	
 	public Point offPoint(Point p) {

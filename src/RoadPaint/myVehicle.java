@@ -1,6 +1,7 @@
 package RoadPaint;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,8 +18,12 @@ public class myVehicle implements ImageObserver {
 	private static final String ImgFile = "pos.png";
 	private static final int imgSrcWidth = 288;
 
+	private static int ID = 0;
+
 	private BufferedImage imgORG, imgSCL, imgDST;
 	private Graphics gCanvas = null;
+	private String TagName = "Tag";
+	private static int id = 0;
 	private int xPos = 0, yPos = 0;
 	private int Yaw = 0;
 	private double defaultScale = 0.0625;
@@ -30,7 +35,9 @@ public class myVehicle implements ImageObserver {
 			e.printStackTrace();
 		}
 		zoom(defaultScale);
+		ShowName();
 		rotate(Yaw);
+		id = ID ++;
 	}
 	public myVehicle(Graphics g) {
 		gCanvas = g;
@@ -41,6 +48,7 @@ public class myVehicle implements ImageObserver {
 			e.printStackTrace();
 		}
 		zoom(defaultScale);
+		ShowName();
 		rotate(Yaw);
 	}
 
@@ -70,6 +78,19 @@ public class myVehicle implements ImageObserver {
     	imgSCL = new BufferedImage((int)(imgORG.getWidth() * scale), (int)(imgORG.getHeight() * scale), imgORG.getType());
 		new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null).filter(imgORG, imgSCL);
     }
+    private void ShowName() {
+    	String s = TagName + "_" + id;
+    	Font f = new Font("Courier New", Font.BOLD, 18);
+    	int cw = imgSCL.getGraphics().getFontMetrics(f).stringWidth(s);
+    	int ch = imgSCL.getGraphics().getFontMetrics(f).getHeight();
+    	int w = Math.max(cw, imgSCL.getWidth());
+    	int h = Math.max(ch, imgSCL.getHeight());
+    	BufferedImage bi = new BufferedImage(w, h, imgSCL.getType());
+    	bi.getGraphics().setFont(f);
+    	bi.getGraphics().drawImage(imgSCL, (w - imgSCL.getWidth()) / 2, (h - imgSCL.getHeight()) / 2, this);
+    	bi.getGraphics().drawString(s, (w - cw) / 2, (h + ch) / 2);
+    	imgSCL = bi;
+    }
 
 	public Image getImage() {
 		return this.imgDST;
@@ -94,12 +115,14 @@ public class myVehicle implements ImageObserver {
 		if(z > 16) z = 16;
 		if(z < 0.5) z = 0.5; 
 		zoom(defaultScale * z);
+		ShowName();
 		rotate(Yaw);
 	}
 	public void setZoomTo(int width) {
 		if(width < 9) width = 9;
 		if(width > imgSrcWidth) width = imgSrcWidth;
 		zoom((double)width / imgSrcWidth);
+		ShowName();
 		rotate(Yaw);
 	}
 	public void update() {
