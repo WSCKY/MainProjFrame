@@ -90,7 +90,13 @@ public class myVehicle implements ImageObserver {
 	}
 	public void setYaw(int yaw) {
 		this.Yaw = yaw;
-		rotate(yaw);
+		rotate(Yaw);
+	}
+	public void setZoom(double z) {
+		if(z > 16) z = 16;
+		if(z < 0.5) z = 0.5; 
+		zoom(Scale * z);
+		rotate(Yaw);
 	}
 	public void update() {
 		if(gCanvas != null) {
