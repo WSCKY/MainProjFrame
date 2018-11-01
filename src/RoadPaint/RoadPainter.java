@@ -83,19 +83,19 @@ public class RoadPainter extends MyMainFrame {
 
 		d[0] = (b1 * a22 - a12 * b2) / (a11 * a22 - a12 * a21);
 		d[1] = (a11 * b2 - b1 * a21) / (a11 * a22 - a12 * a21);
-		
+
 		return d;
 	}
 
 	Point ExpPoint = new Point(0, 0);
 	int degree = 0;
-	double zoom = 0;
+	int wd = 18;
 	public void testUpdate() {
 		degree += 8; if(degree >= 360) degree -= 360;
 		ExpPoint.x = (int) (100 + 30 * Math.sin(Math.toRadians(degree)));
 		ExpPoint.y = (int) (100 + 30 * Math.cos(Math.toRadians(degree)));
-		zoom = 2 + Math.sin(Math.toRadians(degree));
-		myTag.setZoom(zoom);
+		wd = (int) (27 + 9 * Math.sin(Math.toRadians(degree)));
+		myTag.setZoomTo(wd);
 		myTag.setYaw(-degree + 90);
 	}
 
