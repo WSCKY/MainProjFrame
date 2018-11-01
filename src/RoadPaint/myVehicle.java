@@ -15,15 +15,13 @@ import javax.imageio.ImageIO;
 
 public class myVehicle implements ImageObserver {
 	private static final String ImgFile = "pos.png";
-//	private static final int imgSrcWidth = 288;
-//	private static final int imgSrcHeight = 416;
-//	private static final double imgSrcAspRatio = (double)imgSrcHeight / imgSrcWidth;
+	private static final int imgSrcWidth = 288;
 
 	private BufferedImage imgORG, imgSCL, imgDST;
 	private Graphics gCanvas = null;
 	private int xPos = 0, yPos = 0;
 	private int Yaw = 0;
-	private double Scale = 0.0625;
+	private double defaultScale = 0.0625;
 	public myVehicle() {
 		try {
 			imgORG = ImageIO.read(new File(getClass().getResource(ImgFile).getFile()));
@@ -31,7 +29,7 @@ public class myVehicle implements ImageObserver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		zoom(Scale);
+		zoom(defaultScale);
 		rotate(Yaw);
 	}
 	public myVehicle(Graphics g) {
@@ -42,7 +40,7 @@ public class myVehicle implements ImageObserver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		zoom(Scale);
+		zoom(defaultScale);
 		rotate(Yaw);
 	}
 
@@ -79,7 +77,7 @@ public class myVehicle implements ImageObserver {
 	public void setCanvasGraphic(Graphics g) {
 		gCanvas = g;
 	}
-	
+
 	public void move(int x, int y) {
 		xPos += x;
 		yPos += y;
@@ -95,7 +93,13 @@ public class myVehicle implements ImageObserver {
 	public void setZoom(double z) {
 		if(z > 16) z = 16;
 		if(z < 0.5) z = 0.5; 
-		zoom(Scale * z);
+		zoom(defaultScale * z);
+		rotate(Yaw);
+	}
+	public void setZoomTo(int width) {
+		if(width < 9) width = 9;
+		if(width > imgSrcWidth) width = imgSrcWidth;
+		zoom((double)width / imgSrcWidth);
 		rotate(Yaw);
 	}
 	public void update() {
