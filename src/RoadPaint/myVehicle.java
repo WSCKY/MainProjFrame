@@ -1,25 +1,80 @@
 package RoadPaint;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 
 public class myVehicle implements ImageObserver {
-	private Image img;
+	private static final String ImgFile = "pos.png";
+//	private static final int imgSrcWidth = 288;
+//	private static final int imgSrcHeight = 416;
+//	private static final double imgSrcAspRatio = (double)imgSrcHeight / imgSrcWidth;
+
+	private BufferedImage imgORG, imgSCL, imgDST;
 	private Graphics gCanvas = null;
 	private int xPos = 0, yPos = 0;
+	private int Yaw = 0;
+	private double Scale = 0.0625;
 	public myVehicle() {
-		img = new ImageIcon(getClass().getResource("pos.png")).getImage().getScaledInstance(18, 26, Image.SCALE_DEFAULT);
+		try {
+			imgORG = ImageIO.read(new File(getClass().getResource(ImgFile).getFile()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		zoom(Scale);
+		rotate(Yaw);
 	}
 	public myVehicle(Graphics g) {
 		gCanvas = g;
-		img = new ImageIcon(getClass().getResource("pos.png")).getImage().getScaledInstance(18, 26, Image.SCALE_DEFAULT);
+		try {
+			imgORG = ImageIO.read(new File(getClass().getResource(ImgFile).getFile()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		zoom(Scale);
+		rotate(Yaw);
 	}
-	
+
+    private void rotate(int deg) {
+        deg = deg % 360;
+        if (deg < 0) deg = 360 + deg;
+        double rad = Math.toRadians(deg);
+        double sin_rad = Math.sin(rad);
+        double cos_rad = Math.cos(rad);
+        int rw = (int) (Math.abs(imgSCL.getWidth() * cos_rad) + Math.abs(imgSCL.getHeight() * sin_rad));
+        int rh = (int) (Math.abs(imgSCL.getWidth() * sin_rad) + Math.abs(imgSCL.getHeight() * cos_rad));
+
+        int x = (rw / 2) - (imgSCL.getWidth() / 2);
+        int y = (rh / 2) - (imgSCL.getHeight() / 2);
+
+        imgDST = new BufferedImage(rw, rh, imgSCL.getType());
+        Graphics2D gs = (Graphics2D) imgDST.getGraphics();
+        gs.setColor(new Color(0, 0, 0, 0));
+        gs.fillRect(0, 0, rw, rh);
+
+        AffineTransform at = new AffineTransform();
+        at.rotate(rad, rw / 2, rh / 2);
+        at.translate(x, y);
+        new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC).filter(imgSCL, imgDST);
+    }
+    private void zoom(double scale) {
+    	imgSCL = new BufferedImage((int)(imgORG.getWidth() * scale), (int)(imgORG.getHeight() * scale), imgORG.getType());
+		new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null).filter(imgORG, imgSCL);
+    }
+
 	public Image getImage() {
-		return this.img;
+		return this.imgDST;
 	}
 	public void setCanvasGraphic(Graphics g) {
 		gCanvas = g;
@@ -33,9 +88,13 @@ public class myVehicle implements ImageObserver {
 		xPos = x;
 		yPos = y;
 	}
+	public void setYaw(int yaw) {
+		this.Yaw = yaw;
+		rotate(yaw);
+	}
 	public void update() {
 		if(gCanvas != null) {
-			gCanvas.drawImage(img, xPos, yPos, this);
+			gCanvas.drawImage(imgDST, xPos - imgDST.getWidth() / 2, yPos - imgDST.getHeight() / 2, this);
 		} else {
 			// ...
 		}
