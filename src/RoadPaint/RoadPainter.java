@@ -31,6 +31,8 @@ public class RoadPainter extends MyMainFrame {
 	private Image img = null;
 	private Graphics gPointer = null;
 	private myPanel Drawer = new myPanel();
+	
+	private myVehicle myTag = null;
 
 	private Point2D.Double[] pCross = new Point2D.Double[2];
 
@@ -42,18 +44,20 @@ public class RoadPainter extends MyMainFrame {
 		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_INT_RGB);
 		Drawer.setImage(img);
 		gPointer = img.getGraphics();
+		myTag = new myVehicle(gPointer);
+		myTag.update();
 		this.setResizable(true);
 		this.setVisible(true);
 
-		pCross[0] = new Point2D.Double(0, 0);
-		pCross[1] = new Point2D.Double(0, 0);
-		
+        pCross[0] = new Point2D.Double(0, 0);
+        pCross[1] = new Point2D.Double(0, 0);
+
 		this.addMouseListener(ml);
 		this.addMouseMotionListener(ml);
 
 		new Thread(new TestThread()).start();
 	}
-	
+
 	private class TestThread implements Runnable {
 		@Override
 		public void run() {
@@ -62,6 +66,8 @@ public class RoadPainter extends MyMainFrame {
 //				MainPaint(gPointer);
 				testUpdate();
 				testTril(gPointer);
+//				myTag.move(1, 1);
+				myTag.update();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -86,7 +92,7 @@ public class RoadPainter extends MyMainFrame {
 		double b2 = Math.pow(x2, 2) - Math.pow(x3, 2)
 		+ Math.pow(y2, 2) - Math.pow(y3, 2)
 		+ Math.pow(d3, 2) - Math.pow(d2, 2);
-		
+
 		d[0] = (b1 * a22 - a12 * b2) / (a11 * a22 - a12 * a21);
 		d[1] = (a11 * b2 - b1 * a21) / (a11 * a22 - a12 * a21);
 		
@@ -124,7 +130,8 @@ public class RoadPainter extends MyMainFrame {
 		double[] ret = CompPosition(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0,
 				offPoint(xPoint).x, offPoint(xPoint).y, rx,
 				offPoint(yPoint).x, offPoint(yPoint).y, ry);
-		DrawSignPoint(g, new Point((int)ret[0], (int)ret[1]));
+//		DrawSignPoint(g, new Point((int)ret[0], (int)ret[1]));
+		myTag.moveTo((int)ret[0], (int)ret[1]);
 	}
 	
 	public Point offPoint(Point p) {
