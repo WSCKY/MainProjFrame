@@ -12,6 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
+import protocol.ComPackage;
+import protocol.RxAnalyse;
+import protocol.PackageTypes.TypeUWB;
 
 public class RoadPainter extends MyMainFrame {
 
@@ -23,6 +26,9 @@ public class RoadPainter extends MyMainFrame {
 	private static final int PainterWidth = 1000;
 	private static final int PainterHeight = 600;
 	private static final Color backColor = new Color(180, 180, 180);
+
+//	private static ComPackage txData = null;
+	private static ComPackage rxData = new ComPackage();
 
 	private JPanel MainPanel = null;
 	private Image img = null;
@@ -68,6 +74,19 @@ public class RoadPainter extends MyMainFrame {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	public void RxDataProcess() {
+		synchronized(new String("")) {
+			try {
+				rxData = (ComPackage) RxAnalyse.RecPackage.PackageCopy();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(rxData.type == TypeUWB.TYPE_COM_HEARTBEAT) {
+			System.out.println("_cnt: " + (int)rxData.rData[0]);
 		}
 	}
 
