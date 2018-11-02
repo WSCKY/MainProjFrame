@@ -18,13 +18,13 @@ public class myVehicle implements ImageObserver {
 	private static final String ImgFile = "pos.png";
 	private static final int imgSrcWidth = 288;
 
-	private static int ID = 0;
+	private static int INST_CNT = 0;
 
 	private BufferedImage imgORG, imgDST;
 	private BufferedImage imgZoom, imgName;
 	private Graphics gCanvas = null;
 	private String TagName = "TAG";
-	private static int id = 0;
+	private int id = 0;
 	private int xPos = 0, yPos = 0;
 	private int Yaw = 0;
 	private double defaultScale = 0.0625;
@@ -35,10 +35,10 @@ public class myVehicle implements ImageObserver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.id = myVehicle.INST_CNT ++;
 		imgZoom = zoom(imgORG, defaultScale);
 		imgName = DrawName(imgZoom);
 		imgDST = rotate(imgName, Yaw);
-		id = ID ++;
 	}
 	public myVehicle(Graphics g) {
 		gCanvas = g;
@@ -48,10 +48,10 @@ public class myVehicle implements ImageObserver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.id = myVehicle.INST_CNT ++;
 		imgZoom = zoom(imgORG, defaultScale);
 		imgName = DrawName(imgZoom);
 		imgDST = rotate(imgName, Yaw);
-		id = ID ++;
 	}
 
     private BufferedImage rotate(BufferedImage img, int deg) {
@@ -81,7 +81,7 @@ public class myVehicle implements ImageObserver {
 		return new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null).filter(img, imgSCL);
     }
     private BufferedImage DrawName(BufferedImage img) {
-    	String s = TagName + "(" + id + ")";
+    	String s = TagName + "(" + this.id + ")";
     	Font f = new Font("Courier New", Font.BOLD, 16);
     	Graphics g = img.getGraphics();
     	int cw = g.getFontMetrics(f).stringWidth(s);
@@ -98,6 +98,9 @@ public class myVehicle implements ImageObserver {
 
 	public Image getImage() {
 		return this.imgDST;
+	}
+	public int getID() {
+		return this.id;
 	}
 	public void setCanvasGraphic(Graphics g) {
 		gCanvas = g;
