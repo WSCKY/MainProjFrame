@@ -42,6 +42,7 @@ public class RoadPainter extends MyMainFrame {
 		gPointer = img.getGraphics();
 		myTag = new myVehicle(gPointer);
 		myTag.update();
+		myTag.setName("kyChu");
 		myTag_1 = new myVehicle(gPointer);
 		myTag_1.update();
 

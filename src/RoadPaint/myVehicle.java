@@ -105,6 +105,9 @@ public class myVehicle implements ImageObserver {
 	public void setCanvasGraphic(Graphics g) {
 		gCanvas = g;
 	}
+	public void setName(String str) {
+		TagName = str;
+	}
 
 	public void move(int x, int y) {
 		xPos += x;
