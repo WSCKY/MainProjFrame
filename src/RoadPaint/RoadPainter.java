@@ -2,6 +2,7 @@ package RoadPaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -77,6 +78,7 @@ public class RoadPainter extends MyMainFrame {
 		}
 	}
 
+	float recDist = 0;
 	public void RxDataProcess() {
 		synchronized(new String("")) {
 			try {
@@ -86,7 +88,9 @@ public class RoadPainter extends MyMainFrame {
 			}
 		}
 		if(rxData.type == TypeUWB.TYPE_COM_HEARTBEAT) {
-			System.out.println("_cnt: " + (int)rxData.rData[0]);
+//			System.out.println("_cnt: " + (int)rxData.rData[0]);
+		} else if(rxData.type == TypeUWB.TYPE_DIST_Response) {
+			recDist = rxData.readoutInteger(2) / 10.0f;
 		}
 	}
 
@@ -148,6 +152,8 @@ public class RoadPainter extends MyMainFrame {
 				offPoint(yPoint).x, offPoint(yPoint).y, ry);
 		myTag.moveTo((int)ret[0], (int)ret[1]);
 		myTag_1.moveTo((int)ret[0] + 30, (int)ret[1] + 30);
+		g.setFont(new Font("Courier New", Font.BOLD, 20));
+		g.drawString(String.format("Dist: %fcm", recDist), 10,  30);
 	}
 	
 	public Point offPoint(Point p) {
