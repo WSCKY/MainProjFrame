@@ -2,18 +2,29 @@ package RoadPaint;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
-public class myCanvas extends JPanel implements MouseListener, MouseMotionListener {
+public class myCanvas extends JPanel implements ComponentListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private Image img = null;
 	private int xOff = 0, yOff = 0;
 	public myCanvas() {
+		this.addComponentListener(this);
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
+	}
+	public myCanvas(Image img) {
+		if(img != null) {
+			this.img = img;
+		}
+		this.addComponentListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 	}
@@ -71,6 +82,26 @@ public class myCanvas extends JPanel implements MouseListener, MouseMotionListen
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentHidden(ComponentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
