@@ -34,7 +34,7 @@ public class RoadPainter extends MyMainFrame {
 	private JPanel MainPanel = null;
 	private Image img = null;
 	private Graphics gPointer = null;
-	private myCanvas Drawer = new myCanvas();
+	private myCanvas Drawer = null;
 	
 	private myVehicle myTag = null;
 	private myVehicle myTag_1 = null;
@@ -43,16 +43,15 @@ public class RoadPainter extends MyMainFrame {
 		this.setFrameSize(PainterWidth, PainterHeight);
 		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new BorderLayout());
-		MainPanel.add(Drawer, BorderLayout.CENTER);
-		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_INT_RGB);
-		Drawer.setImage(img);
+		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
+		Drawer = new myCanvas(img);
 		gPointer = img.getGraphics();
 		myTag = new myVehicle(gPointer);
 		myTag.update();
 		myTag.setName("kyChu");
 		myTag_1 = new myVehicle(gPointer);
 		myTag_1.update();
-
+		MainPanel.add(Drawer, BorderLayout.CENTER);
 		this.setResizable(true);
 		this.setVisible(true);
 
@@ -155,7 +154,7 @@ public class RoadPainter extends MyMainFrame {
 		g.setFont(new Font("Courier New", Font.BOLD, 20));
 		g.drawString(String.format("Dist: %fcm", recDist), 10,  30);
 	}
-	
+
 	public Point offPoint(Point p) {
 		int off_x = 300;
 		int off_y = 200;
