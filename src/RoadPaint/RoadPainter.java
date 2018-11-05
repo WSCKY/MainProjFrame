@@ -77,7 +77,7 @@ public class RoadPainter extends MyMainFrame {
 		}
 	}
 
-	float recDist = 0;
+	float[] recDist = {0, 0, 0, 0};
 	public void RxDataProcess() {
 		synchronized(new String("")) {
 			try {
@@ -89,7 +89,10 @@ public class RoadPainter extends MyMainFrame {
 		if(rxData.type == TypeUWB.TYPE_COM_HEARTBEAT) {
 //			System.out.println("_cnt: " + (int)rxData.rData[0]);
 		} else if(rxData.type == TypeUWB.TYPE_DIST_Response) {
-			recDist = rxData.readoutInteger(2) / 10.0f;
+			recDist[0] = rxData.readoutInteger(3) / 10.0f;
+			recDist[1] = rxData.readoutInteger(7) / 10.0f;
+			recDist[2] = rxData.readoutInteger(11) / 10.0f;
+			recDist[3] = rxData.readoutInteger(15) / 10.0f;
 		}
 	}
 
@@ -152,7 +155,10 @@ public class RoadPainter extends MyMainFrame {
 		myTag.moveTo((int)ret[0], (int)ret[1]);
 		myTag_1.moveTo((int)ret[0] + 30, (int)ret[1] + 30);
 		g.setFont(new Font("Courier New", Font.BOLD, 20));
-		g.drawString(String.format("Dist: %fcm", recDist), 10,  30);
+		g.drawString(String.format("Dist: %fcm", recDist[0]), 10,  30);
+		g.drawString(String.format("Dist: %fcm", recDist[1]), 10,  50);
+		g.drawString(String.format("Dist: %fcm", recDist[2]), 10,  70);
+		g.drawString(String.format("Dist: %fcm", recDist[3]), 10,  90);
 	}
 
 	public Point offPoint(Point p) {
