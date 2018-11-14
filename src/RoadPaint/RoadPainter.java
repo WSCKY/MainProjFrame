@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
@@ -31,11 +32,12 @@ public class RoadPainter extends MyMainFrame {
 //	private static ComPackage txData = null;
 	private static ComPackage rxData = new ComPackage();
 
+	private JSplitPane SplitPanel = null;
 	private JPanel MainPanel = null;
 	private Image img = null;
 	private Graphics gPointer = null;
 	private myCanvas Drawer = null;
-	
+
 	private myVehicle myTag = null;
 	private myVehicle myTag_1 = null;
 
@@ -43,6 +45,7 @@ public class RoadPainter extends MyMainFrame {
 		this.setFrameSize(PainterWidth, PainterHeight);
 		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new BorderLayout());
+		SplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
 		Drawer = new myCanvas(img);
 		gPointer = img.getGraphics();
@@ -51,7 +54,14 @@ public class RoadPainter extends MyMainFrame {
 		myTag.setName("kyChu");
 		myTag_1 = new myVehicle(gPointer);
 		myTag_1.update();
-		MainPanel.add(Drawer, BorderLayout.CENTER);
+		SplitPanel.setLeftComponent(Drawer);
+		SplitPanel.setRightComponent(new AnchorManager());
+		SplitPanel.setDividerLocation(PainterWidth - 200);
+//		SplitPanel.setDividerSize(20);
+//		SplitPanel.setEnabled(false);
+//		SplitPanel.setOneTouchExpandable(true);
+		MainPanel.add(SplitPanel);
+//		MainPanel.add(Drawer, BorderLayout.CENTER);
 		this.setResizable(true);
 		this.setVisible(true);
 
