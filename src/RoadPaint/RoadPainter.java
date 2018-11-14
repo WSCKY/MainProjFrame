@@ -93,6 +93,12 @@ public class RoadPainter extends MyMainFrame {
 			recDist[1] = rxData.readoutInteger(7) / 10.0f;
 			recDist[2] = rxData.readoutInteger(11) / 10.0f;
 			recDist[3] = rxData.readoutInteger(15) / 10.0f;
+		} else if(rxData.type == TypeUWB.TYPE_DIST_GROUP_Resp) {
+			int cnt = rxData.rData[1];
+			for(int i = 0; i < cnt; i ++) {
+				recDist[rxData.rData[i * 5 + 3]] = rxData.readoutFloat(i * 5 + 4);
+			}
+			System.out.println(String.format("%d", rxData.rData[2] & 0xff));
 		}
 	}
 
