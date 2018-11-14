@@ -9,4 +9,5 @@ public class TypeUWB {
 	public static final byte TYPE_VERSION_Response = (byte)0x03;
 	
 	public static final byte TYPE_DIST_Response = (byte)0x11;
+	public static final byte TYPE_DIST_GROUP_Resp = (byte)0x12;
 }
