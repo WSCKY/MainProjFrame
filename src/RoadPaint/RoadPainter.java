@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +73,6 @@ public class RoadPainter extends MyMainFrame {
 		SplitPanel.setEnabled(false);
 //		SplitPanel.setOneTouchExpandable(true);
 		MainPanel.add(SplitPanel);
-//		MainPanel.add(Drawer, BorderLayout.CENTER);
 		this.setResizable(false);
 		this.setVisible(true);
 
@@ -155,38 +153,6 @@ public class RoadPainter extends MyMainFrame {
 		return d;
 	}
 
-//	Point2D.Double ExpPoint = new Point2D.Double(0, 0);
-//	int degree = 0;
-//	int wd = 18;
-//	public void testUpdate() {
-//		degree += 8; if(degree >= 360) degree -= 360;
-//		ExpPoint.x = (6 + Math.sin(Math.toRadians(degree)));
-//		ExpPoint.y = (6 + Math.cos(Math.toRadians(degree)));
-//		wd = (int) (27 + 9 * Math.sin(Math.toRadians(degree)));
-//		myTag.setZoomTo(wd);
-//		myTag.setYaw(-degree + 90);
-//	}
-
-//	double dist = 5;
-//	double r0 = 0, rx = 0, ry = 0;
-//	public void testTril(Graphics g) {
-//		g.setColor(backColor);
-//		g.fillRect(0, 0, PainterWidth, PainterHeight);
-//		g.setColor(Color.BLUE);
-//		Painter.drawCoordinate(coordTrans.Real2UI(0, 0)); // draw coordinate.
-//		Point2D.Double OrgPoint = new Point2D.Double(-2, -2);
-//		Painter.drawAnchorSign(coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
-//		Point2D.Double xPoint = new Point2D.Double(dist, 0);
-//		Painter.drawAnchorSign(coordTrans.Real2UI(xPoint.x, xPoint.y));
-//		Point2D.Double yPoint = new Point2D.Double(0, dist);
-//		Painter.drawAnchorSign(coordTrans.Real2UI(yPoint.x, yPoint.y));
-//		r0 = distance(ExpPoint, OrgPoint);
-//		rx = distance(ExpPoint, xPoint);
-//		ry = distance(ExpPoint, yPoint);
-//		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
-//		Point p = coordTrans.Real2UI(ret[0], ret[1]);
-//		myTag.moveTo(p.x, p.y);
-//	}
 double r0 = 0, r1 = 0, r2 = 0;
 double x1,y1,x2,y2,x3,y3;
 	public void refreshCanvas() {
@@ -215,10 +181,6 @@ double x1,y1,x2,y2,x3,y3;
 			Point p = coordTrans.Real2UI(ret[0], ret[1]);
 			myTag.moveTo(p.x, p.y);
 		}
-	}
-
-	public double distance(Double expPoint2, Double orgPoint) {
-		return Math.sqrt((expPoint2.x - orgPoint.x) * (expPoint2.x - orgPoint.x) + (expPoint2.y - orgPoint.y) * (expPoint2.y - orgPoint.y));
 	}
 
 	public static void main(String[] args) {
