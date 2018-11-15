@@ -24,7 +24,7 @@ public class AnchorManager extends JPanel {
 
 	private static int AnchorCount = 0;
 	private static int px = 0, py = 0;
-	private static String[] ColumnNames = {"EN", "ID", "X(cm)", "Y(cm)"};
+	private static String[] ColumnNames = {"EN", "ID", "X(m)", "Y(m)"};
 	private DefaultTableModel Model = null;
 	private JTable mTable = null;
 	private JButton addBtn = null, delBtn = null;
@@ -97,16 +97,22 @@ public class AnchorManager extends JPanel {
 	public void addAnchor() {
 		AnchorList.add(new uwbInstance(px, py, AnchorCount));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py)});
-		px += 50; py += 50;
+		px += 2; py += 2;
 		AnchorCount ++;
 	}
 	public void delAnchor() {
 		if(AnchorCount > 0) {
-			px -= 50; py -= 50;
+			px -= 2; py -= 2;
 			AnchorCount --;
 			AnchorList.remove(AnchorCount);
 			Model.removeRow(AnchorCount);
 		}
+	}
+	public uwbInstance getAnchor(int index) {
+		if(index < AnchorCount) {
+			return AnchorList.get(index);
+		}
+		return null;
 	}
 	public static void main(String[] args) {
 		try {
