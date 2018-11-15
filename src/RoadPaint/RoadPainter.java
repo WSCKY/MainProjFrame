@@ -35,6 +35,7 @@ public class RoadPainter extends MyMainFrame {
 	private static ComPackage rxData = new ComPackage();
 
 	private JSplitPane SplitPanel = null;
+	private JSplitPane toolSplit = null;
 	private JPanel MainPanel = null;
 	private Image img = null;
 	private Graphics gGraph = null;
@@ -61,9 +62,15 @@ public class RoadPainter extends MyMainFrame {
 		Painter = new myPainter(gGraph);
 		anchorManager = new AnchorManager();
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
-		coordTrans.setRealArea(1.0, 2.0);
+		coordTrans.setRealArea(4.0, 4.0);
+		toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		toolSplit.setTopComponent(anchorManager);
+		toolSplit.setBottomComponent(coordTrans);
+		toolSplit.setOneTouchExpandable(true);
+		toolSplit.setDividerSize(10);
+		toolSplit.setDividerLocation(PainterHeight - 300);
 		SplitPanel.setLeftComponent(Drawer);
-		SplitPanel.setRightComponent(anchorManager);
+		SplitPanel.setRightComponent(toolSplit);
 		SplitPanel.setDividerLocation(PainterWidth - 300);
 //		SplitPanel.setDividerSize(20);
 		SplitPanel.setEnabled(false);
