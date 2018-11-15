@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +41,9 @@ public class RoadPainter extends MyMainFrame {
 	private myCanvas Drawer = null;
 
 	private myVehicle myTag = null;
-	private myVehicle myTag_1 = null;
+//	private myVehicle myTag_1 = null;
+	
+	CoordTrans coordTrans = null;
 
 	public RoadPainter() {
 		this.setFrameSize(PainterWidth, PainterHeight);
@@ -52,8 +56,9 @@ public class RoadPainter extends MyMainFrame {
 		myTag = new myVehicle(gPointer);
 		myTag.update();
 		myTag.setName("kyChu");
-		myTag_1 = new myVehicle(gPointer);
-		myTag_1.update();
+//		myTag_1 = new myVehicle(gPointer);
+//		myTag_1.update();
+		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		SplitPanel.setLeftComponent(Drawer);
 		SplitPanel.setRightComponent(new AnchorManager());
 		SplitPanel.setDividerLocation(PainterWidth - 200);
@@ -76,7 +81,7 @@ public class RoadPainter extends MyMainFrame {
 				testUpdate();
 				testTril(gPointer);
 				myTag.update();
-				myTag_1.update();
+//				myTag_1.update();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -133,54 +138,47 @@ public class RoadPainter extends MyMainFrame {
 		return d;
 	}
 
-	Point ExpPoint = new Point(0, 0);
+	Point2D.Double ExpPoint = new Point2D.Double(0, 0);
 	int degree = 0;
 	int wd = 18;
 	public void testUpdate() {
 		degree += 8; if(degree >= 360) degree -= 360;
-		ExpPoint.x = (int) (100 + 30 * Math.sin(Math.toRadians(degree)));
-		ExpPoint.y = (int) (100 + 30 * Math.cos(Math.toRadians(degree)));
+		ExpPoint.x = (6 + Math.sin(Math.toRadians(degree)));
+		ExpPoint.y = (6 + Math.cos(Math.toRadians(degree)));
 		wd = (int) (27 + 9 * Math.sin(Math.toRadians(degree)));
 		myTag.setZoomTo(wd);
 		myTag.setYaw(-degree + 90);
 	}
 
-	int dist = 150;
-	int r0 = 0, rx = 0, ry = 0;
+	double dist = 5;
+	double r0 = 0, rx = 0, ry = 0;
 	public void testTril(Graphics g) {
 		g.setColor(backColor);
 		g.fillRect(0, 0, PainterWidth, PainterHeight);
 		g.setColor(Color.BLUE);
-		Point OrgPoint = new Point(0, 0);
-		DrawSignPoint(g, offPoint(OrgPoint));
-		Point xPoint = new Point(dist, 0);
-		DrawSignPoint(g, offPoint(xPoint));
-		DrawLine(g, offPoint(OrgPoint), offPoint(xPoint));
-		Point yPoint = new Point(0, dist);
-		DrawSignPoint(g, offPoint(yPoint));
-		DrawLine(g, offPoint(OrgPoint), offPoint(yPoint));
-		r0 = (int) distance(ExpPoint, OrgPoint);
-		rx = (int) distance(ExpPoint, xPoint);
-		ry = (int) distance(ExpPoint, yPoint);
-		myCircle c0 = new myCircle(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0); DrawCircle(g, c0);
-		myCircle cx = new myCircle(offPoint(xPoint).x, offPoint(xPoint).y, rx); DrawCircle(g, cx);
-		myCircle cy = new myCircle(offPoint(yPoint).x, offPoint(yPoint).y, ry); DrawCircle(g, cy);
-		double[] ret = CompPosition(offPoint(OrgPoint).x, offPoint(OrgPoint).y, r0,
-				offPoint(xPoint).x, offPoint(xPoint).y, rx,
-				offPoint(yPoint).x, offPoint(yPoint).y, ry);
-		myTag.moveTo((int)ret[0], (int)ret[1]);
-		myTag_1.moveTo((int)ret[0] + 30, (int)ret[1] + 30);
-		g.setFont(new Font("Courier New", Font.BOLD, 20));
-		g.drawString(String.format("Dist: %fcm", recDist[0]), 10,  30);
-		g.drawString(String.format("Dist: %fcm", recDist[1]), 10,  50);
-		g.drawString(String.format("Dist: %fcm", recDist[2]), 10,  70);
-		g.drawString(String.format("Dist: %fcm", recDist[3]), 10,  90);
-	}
+		Point2D.Double OrgPoint = new Point2D.Double(0, 0);
+		DrawSignPoint(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
+		Point2D.Double xPoint = new Point2D.Double(dist, 0);
+		DrawSignPoint(g, coordTrans.Real2UI(xPoint.x, xPoint.y));
+		DrawLine(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y), coordTrans.Real2UI(xPoint.x, xPoint.y));
+		Point2D.Double yPoint = new Point2D.Double(0, dist);
+		DrawSignPoint(g, coordTrans.Real2UI(yPoint.x, yPoint.y));
+		DrawLine(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y), coordTrans.Real2UI(yPoint.x, yPoint.y));
+		r0 = distance(ExpPoint, OrgPoint);
+		rx = distance(ExpPoint, xPoint);
+		ry = distance(ExpPoint, yPoint);
+		myCircle c0 = new myCircle(OrgPoint.x, OrgPoint.y, r0); DrawCircle(g, c0);
+		myCircle cx = new myCircle(xPoint.x, xPoint.y, rx); DrawCircle(g, cx);
+		myCircle cy = new myCircle(yPoint.x, yPoint.y, ry); DrawCircle(g, cy);
+		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
+		Point p = coordTrans.Real2UI(ret[0], ret[1]);
+		myTag.moveTo(p.x, p.y);
 
-	public Point offPoint(Point p) {
-		int off_x = 300;
-		int off_y = 200;
-		return new Point(p.x + off_x, p.y + off_y);
+//		g.setFont(new Font("Courier New", Font.BOLD, 20));
+//		g.drawString(String.format("Dist: %fcm", recDist[0]), 10,  30);
+//		g.drawString(String.format("Dist: %fcm", recDist[1]), 10,  50);
+//		g.drawString(String.format("Dist: %fcm", recDist[2]), 10,  70);
+//		g.drawString(String.format("Dist: %fcm", recDist[3]), 10,  90);
 	}
 
 	public void DrawSignPoint(Graphics g, Point p) {
@@ -193,7 +191,9 @@ public class RoadPainter extends MyMainFrame {
 	public void DrawCircle(Graphics g, myCircle c) {
 		Color org_color = g.getColor();
 		g.setColor(Color.RED);
-		g.drawArc((int)(c.getX() - c.getRadius()), (int)(c.getY() - c.getRadius()), (int)c.getRadius() * 2, (int)c.getRadius() * 2, 0, 360);
+		int r = coordTrans.Real2UI(c.getRadius());
+		Point center = coordTrans.Real2UI(c.getX(), c.getY());
+		g.drawArc(center.x - r, center.y - r, r * 2, r * 2, 0, 360);
 		g.setColor(org_color);
 	}
 	public void DrawLine(Graphics g, Point p1, Point p2) {
@@ -203,8 +203,8 @@ public class RoadPainter extends MyMainFrame {
 		g.setColor(org_color);
 	}
 
-	public double distance(Point px, Point py) {
-		return Math.sqrt((px.x - py.x) * (px.x - py.x) + (px.y - py.y) * (px.y - py.y));
+	public double distance(Double expPoint2, Double orgPoint) {
+		return Math.sqrt((expPoint2.x - orgPoint.x) * (expPoint2.x - orgPoint.x) + (expPoint2.y - orgPoint.y) * (expPoint2.y - orgPoint.y));
 	}
 
 	public static void main(String[] args) {
