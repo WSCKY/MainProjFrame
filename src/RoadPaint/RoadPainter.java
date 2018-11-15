@@ -44,6 +44,7 @@ public class RoadPainter extends MyMainFrame {
 	private myPainter Painter = null;
 	private AnchorManager anchorManager = null;
 	private CoordTrans coordTrans = null;
+//	private uwbInstance instTag = null;
 
 	public RoadPainter() {
 		this.setFrameSize(PainterWidth, PainterHeight);
@@ -56,9 +57,11 @@ public class RoadPainter extends MyMainFrame {
 		myTag = new myVehicle(gGraph);
 		myTag.update();
 		myTag.setName("kyChu");
+//		instTag = new uwbInstance(0, 0, 0);
 		Painter = new myPainter(gGraph);
 		anchorManager = new AnchorManager();
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
+		coordTrans.setRealArea(1.0, 2.0);
 		SplitPanel.setLeftComponent(Drawer);
 		SplitPanel.setRightComponent(anchorManager);
 		SplitPanel.setDividerLocation(PainterWidth - 200);
@@ -113,7 +116,13 @@ public class RoadPainter extends MyMainFrame {
 			for(int i = 0; i < cnt; i ++) {
 				recDist[rxData.rData[i * 5 + 3]] = rxData.readoutFloat(i * 5 + 4);
 			}
-			System.out.println(String.format("%d", rxData.rData[2] & 0xff));
+			if(recDist[0] < 0) recDist[0] = 0;
+			if(recDist[1] < 0) recDist[1] = 0;
+			if(recDist[0] < 40)
+			r0 = recDist[0] * 0.05f + r0 * 0.95f;
+			if(recDist[0] < 40)
+			r1 = recDist[1] * 0.05f + r1 * 0.95f;
+//			System.out.println(String.format("%d", rxData.rData[2] & 0xff));
 		}
 	}
 
@@ -138,39 +147,39 @@ public class RoadPainter extends MyMainFrame {
 		return d;
 	}
 
-	Point2D.Double ExpPoint = new Point2D.Double(0, 0);
-	int degree = 0;
-	int wd = 18;
-	public void testUpdate() {
-		degree += 8; if(degree >= 360) degree -= 360;
-		ExpPoint.x = (6 + Math.sin(Math.toRadians(degree)));
-		ExpPoint.y = (6 + Math.cos(Math.toRadians(degree)));
-		wd = (int) (27 + 9 * Math.sin(Math.toRadians(degree)));
-		myTag.setZoomTo(wd);
-		myTag.setYaw(-degree + 90);
-	}
+//	Point2D.Double ExpPoint = new Point2D.Double(0, 0);
+//	int degree = 0;
+//	int wd = 18;
+//	public void testUpdate() {
+//		degree += 8; if(degree >= 360) degree -= 360;
+//		ExpPoint.x = (6 + Math.sin(Math.toRadians(degree)));
+//		ExpPoint.y = (6 + Math.cos(Math.toRadians(degree)));
+//		wd = (int) (27 + 9 * Math.sin(Math.toRadians(degree)));
+//		myTag.setZoomTo(wd);
+//		myTag.setYaw(-degree + 90);
+//	}
 
-	double dist = 5;
-	double r0 = 0, rx = 0, ry = 0;
-	public void testTril(Graphics g) {
-		g.setColor(backColor);
-		g.fillRect(0, 0, PainterWidth, PainterHeight);
-		g.setColor(Color.BLUE);
-		Painter.drawCoordinate(coordTrans.Real2UI(0, 0)); // draw coordinate.
-		Point2D.Double OrgPoint = new Point2D.Double(-2, -2);
-		Painter.drawAnchorSign(coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
-		Point2D.Double xPoint = new Point2D.Double(dist, 0);
-		Painter.drawAnchorSign(coordTrans.Real2UI(xPoint.x, xPoint.y));
-		Point2D.Double yPoint = new Point2D.Double(0, dist);
-		Painter.drawAnchorSign(coordTrans.Real2UI(yPoint.x, yPoint.y));
-		r0 = distance(ExpPoint, OrgPoint);
-		rx = distance(ExpPoint, xPoint);
-		ry = distance(ExpPoint, yPoint);
-		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
-		Point p = coordTrans.Real2UI(ret[0], ret[1]);
-		myTag.moveTo(p.x, p.y);
-	}
-
+//	double dist = 5;
+//	double r0 = 0, rx = 0, ry = 0;
+//	public void testTril(Graphics g) {
+//		g.setColor(backColor);
+//		g.fillRect(0, 0, PainterWidth, PainterHeight);
+//		g.setColor(Color.BLUE);
+//		Painter.drawCoordinate(coordTrans.Real2UI(0, 0)); // draw coordinate.
+//		Point2D.Double OrgPoint = new Point2D.Double(-2, -2);
+//		Painter.drawAnchorSign(coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
+//		Point2D.Double xPoint = new Point2D.Double(dist, 0);
+//		Painter.drawAnchorSign(coordTrans.Real2UI(xPoint.x, xPoint.y));
+//		Point2D.Double yPoint = new Point2D.Double(0, dist);
+//		Painter.drawAnchorSign(coordTrans.Real2UI(yPoint.x, yPoint.y));
+//		r0 = distance(ExpPoint, OrgPoint);
+//		rx = distance(ExpPoint, xPoint);
+//		ry = distance(ExpPoint, yPoint);
+//		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
+//		Point p = coordTrans.Real2UI(ret[0], ret[1]);
+//		myTag.moveTo(p.x, p.y);
+//	}
+double r0 = 0, r1 = 0;
 	public void refreshCanvas() {
 		gGraph.setColor(backColor);
 		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
@@ -181,6 +190,12 @@ public class RoadPainter extends MyMainFrame {
 			if(inst != null) {
 				Painter.drawAnchorSign(coordTrans.Real2UI(inst.getX(), inst.getY()));
 			}
+		}
+		if(n >= 2) {
+				inst = anchorManager.getAnchor(0);
+				Painter.drawCircleShip(coordTrans.Real2UI(inst.getX(), inst.getY()), coordTrans.Real2UI(r0));
+				inst = anchorManager.getAnchor(1);
+				Painter.drawCircleShip(coordTrans.Real2UI(inst.getX(), inst.getY()), coordTrans.Real2UI(r1));
 		}
 	}
 
