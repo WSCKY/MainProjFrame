@@ -33,10 +33,12 @@ public class CoordTrans {
 	public void setUIArea(int w, int h) {
 		UI_Width = w;
 		UI_Height = h;
+		updateGain();
 	}
 	public void setRealArea(double x, double y) {
 		Real_xSize = x;
 		Real_ySize = y;
+		updateGain();
 	}
 	public void updateGain() {
 		double s1, s2;
