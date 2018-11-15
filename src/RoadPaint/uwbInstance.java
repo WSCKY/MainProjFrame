@@ -1,8 +1,8 @@
 package RoadPaint;
 
 public class uwbInstance {
-	private int x = 0;
-	private int y = 0;
+	private double x = 0; /* unit: cm */
+	private double y = 0;
 	private int id = 0;
 	private boolean enable = true;
 	public uwbInstance() {
@@ -23,17 +23,17 @@ public class uwbInstance {
 		id = 0;
 		enable = e;
 	}
-	public uwbInstance(int x, int y, int id) {
+	public uwbInstance(double x, double y, int id) {
 		this.x = x;
 		this.y = y;
 		this.id = id;
 	}
-	public int getX() { return x; }
-	public int getY() { return y; }
+	public double getX() { return x; }
+	public double getY() { return y; }
 	public int getID() { return id; }
 	public boolean isEnable() { return enable; }
-	public void setX(int x) { this.x = x; }
-	public void setY(int y) { this.y = y; }
+	public void setX(double x) { this.x = x; }
+	public void setY(double y) { this.y = y; }
 	public void setID(int id) { this.id = id; }
 	public void Enable(boolean e) { enable = e; }
 }
