@@ -5,7 +5,7 @@ import java.awt.geom.Point2D;
 
 public class CoordTrans {
 	private int UI_Width = 800, UI_Height = 800; // default 800x800 (pixels)
-	private double Real_xSize = 20.0, Real_ySize = 20.0; // default 20.0x20.0 (m)
+	private double Real_xSize = 20.0, Real_ySize = 20.0; // default 20.0x20.0 (unit:m)
 	private int UI_OrgX = 200, UI_OrgY = 200; // default origin.
 
 	private double TransGain = 1.0;
