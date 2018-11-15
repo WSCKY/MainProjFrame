@@ -1,7 +1,7 @@
 package RoadPaint;
 
 public class uwbInstance {
-	private double x = 0; /* unit: cm */
+	private double x = 0; /* unit: m */
 	private double y = 0;
 	private int id = 0;
 	private boolean enable = true;
