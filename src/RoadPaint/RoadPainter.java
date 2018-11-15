@@ -41,9 +41,9 @@ public class RoadPainter extends MyMainFrame {
 	private myCanvas Drawer = null;
 
 	private myVehicle myTag = null;
-//	private myVehicle myTag_1 = null;
-	
-	CoordTrans coordTrans = null;
+	private myPainter Painter = null;
+	private AnchorManager anchorManager = null;
+	private CoordTrans coordTrans = null;
 
 	public RoadPainter() {
 		this.setFrameSize(PainterWidth, PainterHeight);
@@ -56,11 +56,11 @@ public class RoadPainter extends MyMainFrame {
 		myTag = new myVehicle(gPointer);
 		myTag.update();
 		myTag.setName("kyChu");
-//		myTag_1 = new myVehicle(gPointer);
-//		myTag_1.update();
+		Painter = new myPainter(gPointer);
+		anchorManager = new AnchorManager();
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		SplitPanel.setLeftComponent(Drawer);
-		SplitPanel.setRightComponent(new AnchorManager());
+		SplitPanel.setRightComponent(anchorManager);
 		SplitPanel.setDividerLocation(PainterWidth - 200);
 //		SplitPanel.setDividerSize(20);
 //		SplitPanel.setEnabled(false);
@@ -81,7 +81,6 @@ public class RoadPainter extends MyMainFrame {
 				testUpdate();
 				testTril(gPointer);
 				myTag.update();
-//				myTag_1.update();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -156,51 +155,19 @@ public class RoadPainter extends MyMainFrame {
 		g.setColor(backColor);
 		g.fillRect(0, 0, PainterWidth, PainterHeight);
 		g.setColor(Color.BLUE);
-		Point2D.Double OrgPoint = new Point2D.Double(0, 0);
-		DrawSignPoint(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
+		Painter.drawCoordinate(coordTrans.Real2UI(0, 0)); // draw coordinate.
+		Point2D.Double OrgPoint = new Point2D.Double(-2, -2);
+		Painter.drawAnchorSign(coordTrans.Real2UI(OrgPoint.x, OrgPoint.y));
 		Point2D.Double xPoint = new Point2D.Double(dist, 0);
-		DrawSignPoint(g, coordTrans.Real2UI(xPoint.x, xPoint.y));
-		DrawLine(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y), coordTrans.Real2UI(xPoint.x, xPoint.y));
+		Painter.drawAnchorSign(coordTrans.Real2UI(xPoint.x, xPoint.y));
 		Point2D.Double yPoint = new Point2D.Double(0, dist);
-		DrawSignPoint(g, coordTrans.Real2UI(yPoint.x, yPoint.y));
-		DrawLine(g, coordTrans.Real2UI(OrgPoint.x, OrgPoint.y), coordTrans.Real2UI(yPoint.x, yPoint.y));
+		Painter.drawAnchorSign(coordTrans.Real2UI(yPoint.x, yPoint.y));
 		r0 = distance(ExpPoint, OrgPoint);
 		rx = distance(ExpPoint, xPoint);
 		ry = distance(ExpPoint, yPoint);
-		myCircle c0 = new myCircle(OrgPoint.x, OrgPoint.y, r0); DrawCircle(g, c0);
-		myCircle cx = new myCircle(xPoint.x, xPoint.y, rx); DrawCircle(g, cx);
-		myCircle cy = new myCircle(yPoint.x, yPoint.y, ry); DrawCircle(g, cy);
 		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
 		Point p = coordTrans.Real2UI(ret[0], ret[1]);
 		myTag.moveTo(p.x, p.y);
-
-//		g.setFont(new Font("Courier New", Font.BOLD, 20));
-//		g.drawString(String.format("Dist: %fcm", recDist[0]), 10,  30);
-//		g.drawString(String.format("Dist: %fcm", recDist[1]), 10,  50);
-//		g.drawString(String.format("Dist: %fcm", recDist[2]), 10,  70);
-//		g.drawString(String.format("Dist: %fcm", recDist[3]), 10,  90);
-	}
-
-	public void DrawSignPoint(Graphics g, Point p) {
-		Color org_color = g.getColor();
-		g.setColor(Color.BLUE);
-		g.fillArc(p.x - 5, p.y - 5, 10, 10, 0, 360);
-		g.drawString("("+ p.x + ", " + p.y + ")", p.x - 25, p.y - 5);
-		g.setColor(org_color);
-	}
-	public void DrawCircle(Graphics g, myCircle c) {
-		Color org_color = g.getColor();
-		g.setColor(Color.RED);
-		int r = coordTrans.Real2UI(c.getRadius());
-		Point center = coordTrans.Real2UI(c.getX(), c.getY());
-		g.drawArc(center.x - r, center.y - r, r * 2, r * 2, 0, 360);
-		g.setColor(org_color);
-	}
-	public void DrawLine(Graphics g, Point p1, Point p2) {
-		Color org_color = g.getColor();
-		g.setColor(Color.RED);
-		g.drawLine(p1.x, p1.y, p2.x, p2.y);
-		g.setColor(org_color);
 	}
 
 	public double distance(Double expPoint2, Double orgPoint) {
