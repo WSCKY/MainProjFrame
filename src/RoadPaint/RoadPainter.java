@@ -64,13 +64,13 @@ public class RoadPainter extends MyMainFrame {
 		coordTrans.setRealArea(1.0, 2.0);
 		SplitPanel.setLeftComponent(Drawer);
 		SplitPanel.setRightComponent(anchorManager);
-		SplitPanel.setDividerLocation(PainterWidth - 200);
+		SplitPanel.setDividerLocation(PainterWidth - 300);
 //		SplitPanel.setDividerSize(20);
-//		SplitPanel.setEnabled(false);
+		SplitPanel.setEnabled(false);
 //		SplitPanel.setOneTouchExpandable(true);
 		MainPanel.add(SplitPanel);
 //		MainPanel.add(Drawer, BorderLayout.CENTER);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setVisible(true);
 
 		new Thread(new TestThread()).start();
