@@ -67,6 +67,7 @@ public class AnchorManager extends JPanel {
 		p.add(addBtn); p.add(delBtn);
 		this.add(p, BorderLayout.SOUTH);
 	}
+	public int getAnchorNumber() { return AnchorCount; }
 	private TableModelListener TableListener = new TableModelListener() {
 		@Override
 		public void tableChanged(TableModelEvent e) {
