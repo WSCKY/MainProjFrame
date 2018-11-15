@@ -25,4 +25,8 @@ public class myPainter {
 		gCanvas.drawLine(p.x, p.y-50, p.x, p.y+50);
 		gCanvas.drawLine(p.x+1, p.y-50, p.x+1, p.y+50);
 	}
+	public void drawCircleShip(Point p, int r) {
+		gCanvas.setColor(Color.RED);
+		gCanvas.drawArc(p.x-r, p.y-r, r*2, r*2, 0, 360);
+	}
 }
