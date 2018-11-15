@@ -24,7 +24,7 @@ public class AnchorManager extends JPanel {
 
 	private static int AnchorCount = 0;
 	private static int px = 0, py = 0;
-	private static String[] ColumnNames = {"EN", "ID", "X", "Y"};
+	private static String[] ColumnNames = {"EN", "ID", "X(cm)", "Y(cm)"};
 	private DefaultTableModel Model = null;
 	private JTable mTable = null;
 	private JButton addBtn = null, delBtn = null;
@@ -77,20 +77,20 @@ public class AnchorManager extends JPanel {
             int column = e.getColumn(); // get line index.
             if(type == TableModelEvent.INSERT) {
                 System.out.println("Insert row " + row + ".");
-            }else if(type==TableModelEvent.UPDATE) {
+            }else if(type == TableModelEvent.UPDATE) {
                 System.out.println("(" + row + ", " + column + ") Update.");
                 uwbInstance inst = AnchorList.get(row);
                 switch(column) {
 	                case 0: inst.Enable((boolean) mTable.getValueAt(row, 0)); break;
 	                case 1: inst.setID(Integer.parseInt((String) mTable.getValueAt(row, 1))); break;
-	                case 2: inst.setX(Integer.parseInt((String) mTable.getValueAt(row, 2))); break;
-	                case 3: inst.setY(Integer.parseInt((String) mTable.getValueAt(row, 3))); break;
+	                case 2: inst.setX(Double.valueOf((String) mTable.getValueAt(row, 2))); break;
+	                case 3: inst.setY(Double.valueOf((String) mTable.getValueAt(row, 3))); break;
 	                default: break;
                 }
-            }else if (type==TableModelEvent.DELETE) {
-                System.out.println("Delete row " + row + ".");
+            }else if (type == TableModelEvent.DELETE) {
+//                System.out.println("Delete row " + row + ".");
             }else {
-                System.out.println("Unknown event.");
+//                System.out.println("Unknown event.");
             }
 		}
 	};
