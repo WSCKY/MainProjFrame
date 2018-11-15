@@ -1,16 +1,21 @@
 package RoadPaint;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.TableModelEvent;
@@ -23,10 +28,13 @@ public class AnchorManager extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private static int AnchorCount = 0;
-	private static int px = 0, py = 0;
+	private static double px = 0;
+	private static double py = 0;
 	private static String[] ColumnNames = {"EN", "ID", "X(m)", "Y(m)"};
 	private DefaultTableModel Model = null;
 	private JTable mTable = null;
+	private JLabel textLab = null;
+	private JTextField xText = null, yText = null;
 	private JButton addBtn = null, delBtn = null;
 	private ArrayList<uwbInstance> AnchorList = new ArrayList<uwbInstance>();
 	public AnchorManager() {
@@ -45,6 +53,16 @@ public class AnchorManager extends JPanel {
 		tc.setCellRenderer(mTable.getDefaultRenderer(Boolean.class));
 		mTable.setRowHeight(25);
 		mTable.setFont(new Font("Courier New", Font.PLAIN, 14));
+
+		xText = new JTextField("0");
+		xText.setPreferredSize(new Dimension(50, 20));
+		xText.setFont(new Font("Courier New", Font.PLAIN, 14));
+		yText = new JTextField("0");
+		yText.setPreferredSize(new Dimension(50, 20));
+		yText.setFont(new Font("Courier New", Font.PLAIN, 14));
+		textLab = new JLabel("Add to(m): ");
+		textLab.setPreferredSize(new Dimension(90, 20));
+		textLab.setFont(new Font("Courier New", Font.PLAIN, 14));
 		addBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -64,7 +82,13 @@ public class AnchorManager extends JPanel {
 		sp.setViewportView(mTable);
 		this.add(sp, BorderLayout.CENTER);
 		JPanel p = new JPanel();
-		p.add(addBtn); p.add(delBtn);
+		JPanel p1 = new JPanel();
+		JPanel p2 = new JPanel();
+		p1.add(textLab); p1.add(xText); p1.add(yText);
+		p2.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
+		p2.add(addBtn); p2.add(delBtn);
+		p.setLayout(new GridLayout(2, 1));
+		p.add(p1); p.add(p2);
 		this.add(p, BorderLayout.SOUTH);
 	}
 	public int getAnchorNumber() { return AnchorCount; }
@@ -95,14 +119,16 @@ public class AnchorManager extends JPanel {
 		}
 	};
 	public void addAnchor() {
+		px = Double.valueOf(xText.getText());
+		py = Double.valueOf(yText.getText());
 		AnchorList.add(new uwbInstance(px, py, AnchorCount));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py)});
 		px += 2; py += 2;
+		xText.setText(""+px); yText.setText(""+py);
 		AnchorCount ++;
 	}
 	public void delAnchor() {
 		if(AnchorCount > 0) {
-			px -= 2; py -= 2;
 			AnchorCount --;
 			AnchorList.remove(AnchorCount);
 			Model.removeRow(AnchorCount);
