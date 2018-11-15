@@ -76,9 +76,9 @@ public class AnchorManager extends JPanel {
             int row = e.getFirstRow(); // get row index.
             int column = e.getColumn(); // get line index.
             if(type == TableModelEvent.INSERT) {
-                System.out.println("Insert row " + row + ".");
+//                System.out.println("Insert row " + row + ".");
             }else if(type == TableModelEvent.UPDATE) {
-                System.out.println("(" + row + ", " + column + ") Update.");
+//                System.out.println("(" + row + ", " + column + ") Update.");
                 uwbInstance inst = AnchorList.get(row);
                 switch(column) {
 	                case 0: inst.Enable((boolean) mTable.getValueAt(row, 0)); break;
