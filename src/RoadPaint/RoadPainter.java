@@ -37,7 +37,7 @@ public class RoadPainter extends MyMainFrame {
 	private JSplitPane SplitPanel = null;
 	private JPanel MainPanel = null;
 	private Image img = null;
-	private Graphics gPointer = null;
+	private Graphics gGraph = null;
 	private myCanvas Drawer = null;
 
 	private myVehicle myTag = null;
@@ -52,11 +52,11 @@ public class RoadPainter extends MyMainFrame {
 		SplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
 		Drawer = new myCanvas(img);
-		gPointer = img.getGraphics();
-		myTag = new myVehicle(gPointer);
+		gGraph = img.getGraphics();
+		myTag = new myVehicle(gGraph);
 		myTag.update();
 		myTag.setName("kyChu");
-		Painter = new myPainter(gPointer);
+		Painter = new myPainter(gGraph);
 		anchorManager = new AnchorManager();
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		SplitPanel.setLeftComponent(Drawer);
@@ -78,9 +78,10 @@ public class RoadPainter extends MyMainFrame {
 		public void run() {
 			// TODO Auto-generated method stub
 			while(true) {
-				testUpdate();
-				testTril(gPointer);
-				myTag.update();
+//				testUpdate();
+//				testTril(gGraph);
+//				myTag.update();
+				refreshCanvas();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -168,6 +169,19 @@ public class RoadPainter extends MyMainFrame {
 		double[] ret = CompPosition(OrgPoint.x, OrgPoint.y, r0, xPoint.x, xPoint.y, rx, yPoint.x, yPoint.y, ry);
 		Point p = coordTrans.Real2UI(ret[0], ret[1]);
 		myTag.moveTo(p.x, p.y);
+	}
+
+	public void refreshCanvas() {
+		gGraph.setColor(backColor);
+		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
+		int n = anchorManager.getAnchorNumber();
+		uwbInstance inst = null;
+		for(int i = 0; i < n; i ++) {
+			inst = anchorManager.getAnchor(i);
+			if(inst != null) {
+				Painter.drawAnchorSign(coordTrans.Real2UI(inst.getX(), inst.getY()));
+			}
+		}
 	}
 
 	public double distance(Double expPoint2, Double orgPoint) {
