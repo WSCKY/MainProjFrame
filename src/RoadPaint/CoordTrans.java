@@ -1,9 +1,21 @@
 package RoadPaint;
 
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-public class CoordTrans {
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+
+public class CoordTrans extends JPanel {
+	private static final long serialVersionUID = 1L;
+
+	private JCheckBox swapCB = new JCheckBox("SWAP");
+	private JCheckBox xMirCB = new JCheckBox("MirrorX");
+	private JCheckBox yMirCB = new JCheckBox("MirrorY");
+
 	private int UI_Width = 800, UI_Height = 800; // default 800x800 (pixels)
 	private double Real_xSize = 20.0, Real_ySize = 20.0; // default 20.0x20.0 (unit:m)
 	private int UI_OrgX = 200, UI_OrgY = 200; // default origin.
@@ -15,16 +27,28 @@ public class CoordTrans {
 	private boolean X_Mirror = false;
 	private boolean Y_Mirror = false;
 
-	public CoordTrans() {updateGain();}
+	private void initUI() {
+		swapCB.setFont(new Font("Courier New", Font.BOLD, 16));
+		xMirCB.setFont(new Font("Courier New", Font.BOLD, 16));
+		yMirCB.setFont(new Font("Courier New", Font.BOLD, 16));
+		this.add(swapCB);
+		this.add(xMirCB);
+		this.add(yMirCB);
+	}
+
+	public CoordTrans() { initUI(); updateGain(); }
 	public CoordTrans(int w, int h) {
+		initUI();
 		setUIArea(w, h);
 		updateGain();
 	}
 	public CoordTrans(double x, double y) {
+		initUI();
 		setRealArea(x, y);
 		updateGain();
 	}
 	public CoordTrans(int w, int h, double x, double y) {
+		initUI();
 		setUIArea(w, h);
 		setRealArea(x, y);
 		updateGain();
@@ -74,5 +98,22 @@ public class CoordTrans {
 		if(X_Mirror) { x = -x; }
 		if(Y_Mirror) { y = -y; }
 		return (new Point2D.Double(x / (TransGain * UserScale), y / (TransGain * UserScale)));
+	}
+
+	public static void main(String[] args) {
+		try {
+            UIManager.setLookAndFeel(
+                UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Couldn't use system look and feel.");
+        }
+		JFrame f = new JFrame("coordinate setting");
+		CoordTrans coord = new CoordTrans();
+		f.add(coord);
+		f.setSize(400, 300);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setLocation(800, 300);
+		f.setResizable(true);
+		f.setVisible(true);
 	}
 }
