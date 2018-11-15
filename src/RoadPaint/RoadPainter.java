@@ -2,11 +2,9 @@ package RoadPaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
@@ -90,8 +88,8 @@ public class RoadPainter extends MyMainFrame {
 			while(true) {
 //				testUpdate();
 //				testTril(gGraph);
-//				myTag.update();
 				refreshCanvas();
+				myTag.update();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -125,10 +123,13 @@ public class RoadPainter extends MyMainFrame {
 			}
 			if(recDist[0] < 0) recDist[0] = 0;
 			if(recDist[1] < 0) recDist[1] = 0;
+			if(recDist[2] < 0) recDist[2] = 0;
 			if(recDist[0] < 40)
-			r0 = recDist[0] * 0.05f + r0 * 0.95f;
-			if(recDist[0] < 40)
-			r1 = recDist[1] * 0.05f + r1 * 0.95f;
+				r0 = recDist[0] * 0.1 + r0 * 0.9;
+			if(recDist[1] < 40)
+				r1 = recDist[1] * 0.1 + r1 * 0.9;
+			if(recDist[2] < 40)
+				r2 = recDist[2] * 0.1 + r2 * 0.9;
 //			System.out.println(String.format("%d", rxData.rData[2] & 0xff));
 		}
 	}
@@ -186,23 +187,33 @@ public class RoadPainter extends MyMainFrame {
 //		Point p = coordTrans.Real2UI(ret[0], ret[1]);
 //		myTag.moveTo(p.x, p.y);
 //	}
-double r0 = 0, r1 = 0;
+double r0 = 0, r1 = 0, r2 = 0;
+double x1,y1,x2,y2,x3,y3;
 	public void refreshCanvas() {
 		gGraph.setColor(backColor);
 		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
 		int n = anchorManager.getAnchorNumber();
 		uwbInstance inst = null;
+		if(n > 4) n = 4;
 		for(int i = 0; i < n; i ++) {
 			inst = anchorManager.getAnchor(i);
 			if(inst != null) {
 				Painter.drawAnchorSign(coordTrans.Real2UI(inst.getX(), inst.getY()));
 			}
 		}
-		if(n >= 2) {
-				inst = anchorManager.getAnchor(0);
-				Painter.drawCircleShip(coordTrans.Real2UI(inst.getX(), inst.getY()), coordTrans.Real2UI(r0));
-				inst = anchorManager.getAnchor(1);
-				Painter.drawCircleShip(coordTrans.Real2UI(inst.getX(), inst.getY()), coordTrans.Real2UI(r1));
+		if(n >= 3) {
+			inst = anchorManager.getAnchor(0);
+			x1 = inst.getX(); y1 = inst.getY();
+			Painter.drawCircleShip(coordTrans.Real2UI(x1, y1), coordTrans.Real2UI(r0));
+			inst = anchorManager.getAnchor(1);
+			x2 = inst.getX(); y2 = inst.getY();
+			Painter.drawCircleShip(coordTrans.Real2UI(x2, y2), coordTrans.Real2UI(r1));
+			inst = anchorManager.getAnchor(2);
+			x3 = inst.getX(); y3 = inst.getY();
+			Painter.drawCircleShip(coordTrans.Real2UI(x3, y3), coordTrans.Real2UI(r2));
+			double[] ret = CompPosition(x1, y1, r0, x2, y2, r1, x3, y3, r2);
+			Point p = coordTrans.Real2UI(ret[0], ret[1]);
+			myTag.moveTo(p.x, p.y);
 		}
 	}
 
