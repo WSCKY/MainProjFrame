@@ -7,13 +7,16 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JPanel;
 
-public class myCanvas extends JPanel implements ComponentListener, MouseListener, MouseMotionListener {
+public class myCanvas extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 
 	private Image img = null;
+	private CoordTrans coord = null;
 	private int xOff = 0, yOff = 0;
 	public myCanvas() {
 		this.addComponentListener(this);
@@ -27,15 +30,15 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 		this.addComponentListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		this.addMouseWheelListener(this);
+	}
+	public void setCoordTrans(CoordTrans c) {
+		coord = c;
 	}
 	public void setImage(Image img) {
 		if(img != null) {
 			this.img = img;
 		}
-	}
-	public void move(int x, int y) {
-		xOff += x;
-		yOff += y;
 	}
 	public void moveTo(int x, int y) {
 		xOff = x;
@@ -50,7 +53,7 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		move(e.getX() - xMouse, e.getY() - yMouse);
+		coord.move(e.getX() - xMouse, e.getY() - yMouse);
 		xMouse = e.getX();
 		yMouse = e.getY();
 	}
@@ -104,5 +107,11 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 	public void componentHidden(ComponentEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// TODO Auto-generated method stub
+		coord.zoom(-e.getWheelRotation() * 0.2 + 1.0);
+//		System.out.println("wheel :"+e.getWheelRotation());
 	}
 }
