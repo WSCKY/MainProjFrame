@@ -40,10 +40,6 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 			this.img = img;
 		}
 	}
-	public void moveTo(int x, int y) {
-		xOff = x;
-		yOff = y;
-	}
 
 	public void paintComponent(Graphics g) {
 		g.drawImage(img, xOff, yOff, this);
@@ -112,6 +108,5 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// TODO Auto-generated method stub
 		coord.zoom(-e.getWheelRotation() * 0.2 + 1.0);
-//		System.out.println("wheel :"+e.getWheelRotation());
 	}
 }
