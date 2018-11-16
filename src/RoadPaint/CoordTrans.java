@@ -94,6 +94,18 @@ public class CoordTrans extends JPanel {
 		Real_ySize = y;
 		updateGain();
 	}
+	public void move(int x, int y) {
+		UI_OrgX += x;
+		UI_OrgY += y;
+	}
+	public void moveTo(int x, int y) {
+		UI_OrgX = x;
+		UI_OrgY = y;
+	}
+	public void zoom(double scale) {
+		TransGain *= scale;
+	}
+
 	public void updateGain() {
 		double s1, s2;
 		int gap = (int) (((UI_Width < UI_Height) ? UI_Width : UI_Height) * 0.07);
