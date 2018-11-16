@@ -85,8 +85,9 @@ public class RoadPainter extends MyMainFrame {
 		public void run() {
 			// TODO Auto-generated method stub
 			while(true) {
-				refreshCanvas();
-				myTag.update();
+//				refreshCanvas();
+//				myTag.update();
+				testLocus();
 				try {
 					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
@@ -144,6 +145,17 @@ public class RoadPainter extends MyMainFrame {
 		d[1] = (a11 * b2 - b1 * a21) / (a11 * a22 - a12 * a21);
 
 		return d;
+	}
+
+	int deg = 0;
+	public void testLocus() {
+		gGraph.setColor(backColor);
+		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
+		double x = 3.0 + 0.8 * Math.sin(Math.toRadians(deg));
+		double y = 2.0 + 0.5 * Math.cos(Math.toRadians(deg));
+		deg += 6; if(deg > 360) deg -= 360;
+		Painter.addLocusPoint(coordTrans.Real2UI(x, y));
+		Painter.drawLocus();
 	}
 
 double r0 = 0, r1 = 0, r2 = 0;
