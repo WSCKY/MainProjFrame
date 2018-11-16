@@ -60,6 +60,7 @@ public class RoadPainter extends MyMainFrame {
 		anchorManager = new AnchorManager();
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		coordTrans.setRealArea(4.0, 4.0);
+		Drawer.setCoordTrans(coordTrans);
 		toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		toolSplit.setTopComponent(anchorManager);
 		toolSplit.setBottomComponent(coordTrans);
@@ -84,8 +85,6 @@ public class RoadPainter extends MyMainFrame {
 		public void run() {
 			// TODO Auto-generated method stub
 			while(true) {
-//				testUpdate();
-//				testTril(gGraph);
 				refreshCanvas();
 				myTag.update();
 				try {
@@ -107,14 +106,9 @@ public class RoadPainter extends MyMainFrame {
 				e.printStackTrace();
 			}
 		}
-		if(rxData.type == TypeUWB.TYPE_COM_HEARTBEAT) {
-//			System.out.println("_cnt: " + (int)rxData.rData[0]);
-		} else if(rxData.type == TypeUWB.TYPE_DIST_Response) {
-			recDist[0] = rxData.readoutInteger(3) / 10.0f;
-			recDist[1] = rxData.readoutInteger(7) / 10.0f;
-			recDist[2] = rxData.readoutInteger(11) / 10.0f;
-			recDist[3] = rxData.readoutInteger(15) / 10.0f;
-		} else if(rxData.type == TypeUWB.TYPE_DIST_GROUP_Resp) {
+		     if(rxData.type == TypeUWB.TYPE_COM_HEARTBEAT) {}
+		else if(rxData.type == TypeUWB.TYPE_DIST_Response) {}
+		else if(rxData.type == TypeUWB.TYPE_DIST_GROUP_Resp) {
 			int cnt = rxData.rData[1];
 			for(int i = 0; i < cnt; i ++) {
 				recDist[rxData.rData[i * 5 + 3]] = rxData.readoutFloat(i * 5 + 4);
@@ -128,7 +122,6 @@ public class RoadPainter extends MyMainFrame {
 				r1 = recDist[1] * 0.1 + r1 * 0.9;
 			if(recDist[2] < 40)
 				r2 = recDist[2] * 0.1 + r2 * 0.9;
-//			System.out.println(String.format("%d", rxData.rData[2] & 0xff));
 		}
 	}
 
