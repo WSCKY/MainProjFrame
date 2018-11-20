@@ -54,18 +54,15 @@ public class myPainter {
 		int i = pointIndexCnt, j = 0;
 		int colorStep = 255 / MAX_POINT;
 		int alpha = 255;
-		Point p1, p2 = new Point(0, 0);
-		Graphics2D g2d = (Graphics2D)gCanvas;
-		g2d.setStroke(new BasicStroke(5));
+		Point p = new Point(0, 0);
+//		Graphics2D g2d = (Graphics2D)gCanvas;
+//		g2d.setStroke(new BasicStroke(5));
 		do {
 			alpha = j * colorStep;
-			g2d.setColor(new Color(255, 0, 0, alpha));
-			p1 = pointList[i ++];
+			gCanvas.setColor(new Color(255, 0, 0, alpha));
+			p = pointList[i ++];
 			if(i >= MAX_POINT) i = 0;
-			if(j > 0) {
-				g2d.drawLine(p2.x, p2.y, p1.x, p1.y);
-			}
-			p2 = p1;
+			gCanvas.fillArc(p.x-4, p.y-4, 8, 8, 0, 360);
 			j ++;
 		} while(j < MAX_POINT);
 	}
