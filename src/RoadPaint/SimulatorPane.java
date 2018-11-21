@@ -192,21 +192,15 @@ double x1,y1,x2,y2,x3,y3;
         } catch (Exception e) {
             System.err.println("Couldn't use system look and feel.");
         }
-		TestSimulator ts = new TestSimulator();
-		ts.setFrameSize(PainterWidth, PainterHeight);
+		MyMainFrame mf = new MyMainFrame();
+		mf.setTitle("Simulator Test");
+		mf.setFrameSize(PainterWidth, PainterHeight);
 		SimulatorPane sp = new SimulatorPane(); 
-		JPanel mp = ts.getUsrMainPanel();
+		JPanel mp = mf.getUsrMainPanel();
 		mp.setLayout(new BorderLayout());
 		mp.add(sp, BorderLayout.CENTER);
-		ts.getDecoder().addDecodeListener(sp);
-		ts.setResizable(false);
-		ts.setVisible(true);
-	}
-}
-
-class TestSimulator extends MyMainFrame {
-	private static final long serialVersionUID = 1L;
-	public TestSimulator() {
-		this.setTitle("Simulator Test");
+		mf.getDecoder().addDecodeListener(sp);
+		mf.setResizable(false);
+		mf.setVisible(true);
 	}
 }
