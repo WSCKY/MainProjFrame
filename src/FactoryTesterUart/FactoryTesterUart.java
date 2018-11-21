@@ -38,7 +38,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import protocol.ComPackage;
-import protocol.RxAnalyse;
 import protocol.PackageTypes.TypePartnerX;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
