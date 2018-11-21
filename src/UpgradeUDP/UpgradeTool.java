@@ -57,7 +57,6 @@ import javax.swing.filechooser.FileSystemView;
 import FirmwareRule.FileHeader;
 import FirmwareRule.FileNameRegular;
 import protocol.ComPackage;
-import protocol.RxAnalyse;
 import protocol.PackageTypes.TypePartnerX;
 
 public class UpgradeTool extends JFrame {

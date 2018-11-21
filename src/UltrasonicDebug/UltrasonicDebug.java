@@ -66,7 +66,6 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
-import protocol.RxAnalyse;
 import protocol.PackageTypes.TypePartnerX;
 
 public class UltrasonicDebug extends JFrame {

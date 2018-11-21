@@ -17,7 +17,6 @@ import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
 import protocol.ComPackage;
-import protocol.RxAnalyse;
 import protocol.PackageTypes.TypeDeepblue;
 
 public class SalesCtrl extends MyMainFrame {
