@@ -24,7 +24,6 @@ public class WavePlayer extends WaveTool implements Runnable, DecodeEventListene
 		super(Title);
 		// TODO Auto-generated constructor stub
 		for(int i = 0; i < Max_Lines; i ++) {
-//			dist[i] = 0;
 			this.addNewSeries("dist" + i);
 			this.setSeriesStroke(i, 3);
 		}
@@ -37,13 +36,11 @@ public class WavePlayer extends WaveTool implements Runnable, DecodeEventListene
 		// TODO Auto-generated method stub
 		while(true) {
 			try {
-//				Thread.sleep(10);
 				semaphore.acquire();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			System.out.println("get");
 			this.addDataToSeries(0, recDist[0]);
 			this.addDataToSeries(1, recDist[1]);
 		}
@@ -51,7 +48,6 @@ public class WavePlayer extends WaveTool implements Runnable, DecodeEventListene
 
 	private int recNum = 0;
 	private float[] recDist = {0, 0, 0, 0};
-//	private double[] dist = new double[Max_Lines];
 	@Override
 	public void getNewPackage(DecodeEvent event) {
 		// TODO Auto-generated method stub
@@ -73,14 +69,12 @@ public class WavePlayer extends WaveTool implements Runnable, DecodeEventListene
 //			if(recDist[2] < 40)
 //				dist[2] = recDist[2] * 0.1 + dist[2] * 0.9;
 			semaphore.release();
-//			System.out.println("rel");
 		}
 	}
 
 	@Override
 	public void badCRCEvent(DecodeEvent event) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public static void main(String[] args) {
