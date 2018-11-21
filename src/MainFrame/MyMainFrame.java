@@ -49,9 +49,11 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import protocol.ComPackage;
-import protocol.RxAnalyse;
+import protocol.decoder.myProtocolDecoder;
+import protocol.event.DecodeEvent;
+import protocol.event.DecodeEventListener;
 
-public class MyMainFrame extends JFrame {
+public class MyMainFrame extends JFrame implements SerialPortEventListener, DecodeEventListener {
 	private static final long serialVersionUID = 1L;
 
 	private static int FrameWidth = 600;
@@ -67,6 +69,7 @@ public class MyMainFrame extends JFrame {
 
 //	private static ComPackage rxData = new ComPackage();
 	private static ComPackage txData = new ComPackage();
+	private static myProtocolDecoder decoder = null;
 
 	private static final int CommPort = 6000;
 	private static final String CommIP = "192.168.4.1";
@@ -201,6 +204,8 @@ public class MyMainFrame extends JFrame {
 		this.add(ComPanel, BorderLayout.NORTH);
 		this.add(UsrMainPanel, BorderLayout.CENTER);
 
+		decoder = new myProtocolDecoder();
+		decoder.addDecodeListener(this);
 		if(_Interface.equals("Wifi")) {
 			if(CommSocket == null) {
 				try {
@@ -225,8 +230,12 @@ public class MyMainFrame extends JFrame {
 	private static boolean AutoTxEnable = false;
 	private static int AutoTxTimeDelay = 100;
 	public ComPackage getTxPackage() { return txData; }
+	public myProtocolDecoder getDecoder() { return decoder; }
 	public void setAutoTxEnable(boolean en) {AutoTxEnable = en;}
 	public void setAutoTxDelayTicks(int ticks) {AutoTxTimeDelay = ticks;}
+	public void addDecodeEventListener(DecodeEventListener listener) {
+		decoder.addDecodeListener(listener);
+	}
 
 	private byte HeartbatCnt = 0;
 	public byte[] CreateSendBuffer() {
@@ -267,34 +276,13 @@ public class MyMainFrame extends JFrame {
 		}
 	}
 
-	public void RxDataProcess() {
-//		synchronized(new String("")) {
-//			try {
-//				rxData = (ComPackage) RxAnalyse.RecPackage.PackageCopy();
-//			} catch (CloneNotSupportedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		if(rxData.type == ComPackage.TYPE_WIFI_RC_RAW) {
-//			System.out.println(
-//					"C1: " + (int)rxData.readoutCharacter(0) + " " +
-//					"C2: " + (int)rxData.readoutCharacter(2) + " " +
-//					"C3: " + (int)rxData.readoutCharacter(4) + " " +
-//					"C4: " + (int)rxData.readoutCharacter(6));
-//		}
-	}
-
 	public void SignalLostCallback() {}
 
 	private boolean GotResponseFlag = false;
 	private void RxDataPreProcess(byte[] rData, int len) {
 		try {
 			for(int i = 0; i < len; i ++)
-				RxAnalyse.rx_decode(rData[i]);
-			if(RxAnalyse.GotNewPackage()) {
-				RxDataProcess();
-				GotResponseFlag = true;
-			}
+				decoder.rx_decode(rData[i]);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
@@ -324,42 +312,52 @@ public class MyMainFrame extends JFrame {
 		}
 	}
 
-	private class SerialListener implements SerialPortEventListener {
-	    public void serialEvent(SerialPortEvent serialPortEvent) {
-	        switch (serialPortEvent.getEventType()) {
-	            case SerialPortEvent.BI: // 10 通讯中断s
-//	            	JOptionPane.showMessageDialog(null, "communication interrupted!", "error!", JOptionPane.ERROR_MESSAGE);
-	            break;
-	            case SerialPortEvent.OE: // 7 溢位（溢出）错误
-	            case SerialPortEvent.FE: // 9 帧错误
-	            case SerialPortEvent.PE: // 8 奇偶校验错误
-	            case SerialPortEvent.CD: // 6 载波检测
-	            case SerialPortEvent.CTS: // 3 清除待发送数据
-	            case SerialPortEvent.DSR: // 4 待发送数据准备好了
-	            case SerialPortEvent.RI: // 5 振铃指示
-	            case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 2 输出缓冲区已清空
-	            break;
-	            case SerialPortEvent.DATA_AVAILABLE: // 1 串口存在可用数据
-	            	byte[] data = null;
-	            	try {
-		            	if (serialPort == null) {
-							JOptionPane.showMessageDialog(null, "serial port = null", "error!", JOptionPane.ERROR_MESSAGE);
-						} else {
-							data = SerialTool.readFromPort(serialPort);//read data from port.
-							if (data == null || data.length < 1) {//check data.
-								JOptionPane.showMessageDialog(null, "no valid data!", "error!", JOptionPane.ERROR_MESSAGE);
-								System.exit(0);
-							} else {
-								RxDataPreProcess(data, data.length);
-							}
-						}
-	            	} catch (ReadDataFromSerialPortFailure | SerialPortInputStreamCloseFailure e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            break;
-	        }
-	    }
+	@Override
+	public void getNewPackage(DecodeEvent event) {
+		// TODO Auto-generated method stub
+		GotResponseFlag = true;
+	}
+	@Override
+	public void badCRCEvent(DecodeEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void serialEvent(SerialPortEvent serialPortEvent) {
+		// TODO Auto-generated method stub
+        switch (serialPortEvent.getEventType()) {
+        	case SerialPortEvent.BI: // 10 通讯中断s
+//        		JOptionPane.showMessageDialog(null, "communication interrupted!", "error!", JOptionPane.ERROR_MESSAGE);
+        	break;
+        	case SerialPortEvent.OE: // 7 溢位（溢出）错误
+        	case SerialPortEvent.FE: // 9 帧错误
+        	case SerialPortEvent.PE: // 8 奇偶校验错误
+        	case SerialPortEvent.CD: // 6 载波检测
+        	case SerialPortEvent.CTS: // 3 清除待发送数据
+        	case SerialPortEvent.DSR: // 4 待发送数据准备好了
+        	case SerialPortEvent.RI: // 5 振铃指示
+        	case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 2 输出缓冲区已清空
+        	break;
+        	case SerialPortEvent.DATA_AVAILABLE: // 1 串口存在可用数据
+        		byte[] data = null;
+        		try {
+        			if (serialPort == null) {
+        				JOptionPane.showMessageDialog(null, "serial port = null", "error!", JOptionPane.ERROR_MESSAGE);
+        			} else {
+        				data = SerialTool.readFromPort(serialPort);//read data from port.
+        				if (data == null || data.length < 1) {//check data.
+        					JOptionPane.showMessageDialog(null, "no valid data!", "error!", JOptionPane.ERROR_MESSAGE);
+        					System.exit(0);
+        				} else {
+        					RxDataPreProcess(data, data.length);
+        				}
+        			}
+        		} catch (ReadDataFromSerialPortFailure | SerialPortInputStreamCloseFailure e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+        	break;
+        }
 	}
 
 	private static int SignalLostCnt = 0;
@@ -390,6 +388,11 @@ public class MyMainFrame extends JFrame {
 		}
 	}
 
+	private void OpenUartPort(String srName, int bps) throws SerialPortParameterFailure, NotASerialPort, NoSuchPort, PortInUse, TooManyListeners {
+		serialPort = SerialTool.openPort(srName, bps);
+		SerialTool.addListener(serialPort, this);
+	}
+
 	private ActionListener opl = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			String name = ((JButton)e.getSource()).getText();
@@ -405,8 +408,7 @@ public class MyMainFrame extends JFrame {
 						int bps = Integer.parseInt(srBaud);
 
 						try {
-							serialPort = SerialTool.openPort(srName, bps);
-							SerialTool.addListener(serialPort, new SerialListener());
+							OpenUartPort(srName, bps);
 							((JButton)e.getSource()).setText("断开");
 							srSelect.setEnabled(false);
 							srBaudSet.setEnabled(false);
