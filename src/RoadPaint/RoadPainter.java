@@ -2,6 +2,7 @@ package RoadPaint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -10,9 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
+import WaveTool.WaveTool;
 import protocol.ComPackage;
 import protocol.RxAnalyse;
 import protocol.PackageTypes.TypeUWB;
@@ -31,6 +34,7 @@ public class RoadPainter extends MyMainFrame {
 //	private static ComPackage txData = null;
 	private static ComPackage rxData = new ComPackage();
 
+	private JTabbedPane MainTabPane = new JTabbedPane();
 	private JSplitPane SplitPanel = null;
 	private JSplitPane toolSplit = null;
 	private JPanel MainPanel = null;
@@ -45,6 +49,7 @@ public class RoadPainter extends MyMainFrame {
 //	private uwbInstance instTag = null;
 
 	public RoadPainter() {
+		this.setTitle("UWB MONITOR");
 		this.setFrameSize(PainterWidth, PainterHeight);
 		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new BorderLayout());
@@ -73,7 +78,10 @@ public class RoadPainter extends MyMainFrame {
 //		SplitPanel.setDividerSize(20);
 		SplitPanel.setEnabled(false);
 //		SplitPanel.setOneTouchExpandable(true);
-		MainPanel.add(SplitPanel);
+		MainTabPane.setFont(MainTabPane.getFont().deriveFont(Font.BOLD, 16));
+		MainTabPane.addTab("MainPane", null, SplitPanel, "Main Panel");
+		MainTabPane.addTab("WaveTool", null, new WaveTool("Distance"), "Wave Tool");
+		MainPanel.add(MainTabPane);
 		this.setResizable(false);
 		this.setVisible(true);
 
