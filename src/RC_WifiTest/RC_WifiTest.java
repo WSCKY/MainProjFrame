@@ -11,8 +11,9 @@ import javax.swing.UIManager;
 
 import MainFrame.MyMainFrame;
 import protocol.ComPackage;
-import protocol.RxAnalyse;
 import protocol.PackageTypes.TypePartnerX;
+import protocol.event.DecodeEvent;
+import protocol.event.DecodeEventListener;
 
 public class RC_WifiTest extends MyMainFrame {
 	private static final long serialVersionUID = 1L;
@@ -21,7 +22,7 @@ public class RC_WifiTest extends MyMainFrame {
 	private static final int ChannelMinVal = 352;
 	private static final int ChannelMaxVal = 1696;
 
-	private static ComPackage rxData = new ComPackage();
+	private static ComPackage rxData = null;
 
 	private JPanel MainPanel = null;
 	private JLabel[] ChannelVals = new JLabel[ChannelNumber];
@@ -36,6 +37,7 @@ public class RC_WifiTest extends MyMainFrame {
 //		this.setResizable(true);
 		MainPanel = this.getUsrMainPanel();
 		MainPanel.setLayout(new GridLayout(1, ChannelNumber, 10, 10));
+		this.addDecodeEventListener(del);
 		for(int i = 0; i < ChannelNumber; i ++) {
 			ChannelPanels[i] = new JPanel();
 			ChannelPanels[i].setLayout(new BorderLayout());
@@ -65,21 +67,26 @@ public class RC_WifiTest extends MyMainFrame {
 		this.setDebugString("Ready ...");
 	}
 
-	public void RxDataProcess() {
-		synchronized(new String("")) {
-			try {
-				rxData = (ComPackage) RxAnalyse.RecPackage.PackageCopy();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
+	private DecodeEventListener del = new DecodeEventListener() {
+
+		@Override
+		public void getNewPackage(DecodeEvent event) {
+			// TODO Auto-generated method stub
+			rxData = (ComPackage)event.getSource();
+			if(rxData.type == TypePartnerX.TYPE_WIFI_RC_RAW) {
+				for(int i = 0; i < ChannelNumber; i ++) {
+					ChannelVals[i].setText(String.format("%04d", (int)(rxData.readoutCharacter(i << 1))));
+					ChannelProgs[i].setValue((int)(rxData.readoutCharacter(i << 1)));
+				}
 			}
 		}
-		if(rxData.type == TypePartnerX.TYPE_WIFI_RC_RAW) {
-			for(int i = 0; i < ChannelNumber; i ++) {
-				ChannelVals[i].setText(String.format("%04d", (int)(rxData.readoutCharacter(i << 1))));
-				ChannelProgs[i].setValue((int)(rxData.readoutCharacter(i << 1)));
-			}
+
+		@Override
+		public void badCRCEvent(DecodeEvent event) {
+			// TODO Auto-generated method stub
+			
 		}
-	}
+	};
 
 	public static void main(String[] args) {
 		try {
