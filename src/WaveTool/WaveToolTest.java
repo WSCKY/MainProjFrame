@@ -24,9 +24,9 @@ final class WaveToolTest extends MyMainFrame implements Runnable {
 		MainPanel.setLayout(new BorderLayout());
 		MainPanel.add(myWT);
 
-		myWT.addNewSeries("Data0"); System.out.println("num:"+myWT.getSeriesNumber());
-		myWT.addNewSeries("Data1"); System.out.println("num:"+myWT.getSeriesNumber());
-		myWT.addNewSeries("Data2"); System.out.println("num:"+myWT.getSeriesNumber());
+		myWT.addNewSeries("Data0");
+		myWT.addNewSeries("Data1");
+		myWT.addNewSeries("Data2");
 		myWT.setTitle("TEST TOOL");
 		myWT.setValueAxisLabel("Distance");
 		this.setVisible(true);
@@ -36,14 +36,14 @@ final class WaveToolTest extends MyMainFrame implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		double value = 100;
+		double value = 0;
 		while(true) {
 			value = value + Math.random( ) - 0.5;
 			myWT.addDataToSeries(0, value);
-			myWT.addDataToSeries(1, value - 5);
-			myWT.addDataToSeries(2, value + 5);
+			myWT.addDataToSeries(1, value - 1);
+			myWT.addDataToSeries(2, value + 1);
 			try {
-				Thread.sleep(20);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
