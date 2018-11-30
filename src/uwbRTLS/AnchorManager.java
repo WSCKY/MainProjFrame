@@ -140,6 +140,13 @@ public class AnchorManager extends JPanel {
 		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
 		AnchorCount ++;
 	}
+	public void addAnchor(double x, double y, double z) {
+		AnchorList.add(new uwbInstance(x, y, z, AnchorCount));
+		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
+		px = x + 2; py = y + 2;
+		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
+		AnchorCount ++;
+	}
 	public void delAnchor() {
 		if(AnchorCount > 0) {
 			AnchorCount --;
