@@ -43,6 +43,8 @@ public class WavePlayer extends WaveTool implements Runnable, DecodeEventListene
 			}
 			this.addDataToSeries(0, recDist[0]);
 			this.addDataToSeries(1, recDist[1]);
+			this.addDataToSeries(2, recDist[2]);
+			this.addDataToSeries(3, recDist[3]);
 		}
 	}
 
