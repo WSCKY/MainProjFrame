@@ -30,11 +30,12 @@ public class AnchorManager extends JPanel {
 	private static int AnchorCount = 0;
 	private static double px = 0;
 	private static double py = 0;
-	private static String[] ColumnNames = {"EN", "ID", "X(m)", "Y(m)"};
+	private static double pz = 0;
+	private static String[] ColumnNames = {"EN", "ID", "X(m)", "Y(m)", "Z(m)"};
 	private DefaultTableModel Model = null;
 	private JTable mTable = null;
 	private JLabel textLab = null;
-	private JTextField xText = null, yText = null;
+	private JTextField xText = null, yText = null, zText = null;
 	private JButton addBtn = null, delBtn = null;
 	private ArrayList<uwbInstance> AnchorList = new ArrayList<uwbInstance>();
 	public AnchorManager() {
@@ -60,6 +61,9 @@ public class AnchorManager extends JPanel {
 		yText = new JTextField("0");
 		yText.setPreferredSize(new Dimension(50, 20));
 		yText.setFont(new Font("Courier New", Font.PLAIN, 14));
+		zText = new JTextField("2");
+		zText.setPreferredSize(new Dimension(50, 20));
+		zText.setFont(new Font("Courier New", Font.PLAIN, 14));
 		textLab = new JLabel("Add to(m): ");
 		textLab.setPreferredSize(new Dimension(90, 20));
 		textLab.setFont(new Font("Courier New", Font.PLAIN, 14));
@@ -84,7 +88,7 @@ public class AnchorManager extends JPanel {
 		JPanel p = new JPanel();
 		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
-		p1.add(textLab); p1.add(xText); p1.add(yText);
+		p1.add(textLab); p1.add(xText); p1.add(yText); p1.add(zText);
 		p2.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
 		p2.add(addBtn); p2.add(delBtn);
 		p.setLayout(new GridLayout(2, 1));
@@ -109,6 +113,7 @@ public class AnchorManager extends JPanel {
 	                case 1: inst.setID(Integer.parseInt((String) mTable.getValueAt(row, 1))); break;
 	                case 2: inst.setX(Double.valueOf((String) mTable.getValueAt(row, 2))); break;
 	                case 3: inst.setY(Double.valueOf((String) mTable.getValueAt(row, 3))); break;
+	                case 4: inst.setZ(Double.valueOf((String) mTable.getValueAt(row, 4))); break;
 	                default: break;
                 }
             }else if (type == TableModelEvent.DELETE) {
@@ -121,10 +126,11 @@ public class AnchorManager extends JPanel {
 	public void addAnchor() {
 		px = Double.valueOf(xText.getText());
 		py = Double.valueOf(yText.getText());
-		AnchorList.add(new uwbInstance(px, py, AnchorCount));
-		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py)});
+		pz = Double.valueOf(zText.getText());
+		AnchorList.add(new uwbInstance(px, py, pz, AnchorCount));
+		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
 		px += 2; py += 2;
-		xText.setText(""+px); yText.setText(""+py);
+		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
 		AnchorCount ++;
 	}
 	public void delAnchor() {
@@ -150,7 +156,7 @@ public class AnchorManager extends JPanel {
 		JFrame tFrame = new JFrame();
 		AnchorManager tas = new AnchorManager();
 		tFrame.add(tas);
-		tFrame.setSize(250, 500);
+		tFrame.setSize(280, 500);
 		tFrame.setLocation(1000, 300);
 		tFrame.setResizable(false);
 		tFrame.setTitle("anchor manager");
