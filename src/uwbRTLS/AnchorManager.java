@@ -95,6 +95,13 @@ public class AnchorManager extends JPanel {
 		p.add(p1); p.add(p2);
 		this.add(p, BorderLayout.SOUTH);
 	}
+	public AnchorManager(int defaultNumber) {
+		this();
+		do {
+			addAnchor();
+			defaultNumber --;
+		} while(defaultNumber > 0);
+	}
 	public int getAnchorNumber() { return AnchorCount; }
 	private TableModelListener TableListener = new TableModelListener() {
 		@Override
@@ -154,7 +161,7 @@ public class AnchorManager extends JPanel {
             System.err.println("Couldn't use system look and feel.");
         }
 		JFrame tFrame = new JFrame();
-		AnchorManager tas = new AnchorManager();
+		AnchorManager tas = new AnchorManager(10);
 		tFrame.add(tas);
 		tFrame.setSize(280, 500);
 		tFrame.setLocation(1000, 300);
