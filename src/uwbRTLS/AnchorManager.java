@@ -147,6 +147,15 @@ public class AnchorManager extends JPanel {
 		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
 		AnchorCount ++;
 	}
+	public void addAnchor(uwbInstance inst) {
+		inst.setID(AnchorCount);
+		AnchorList.add(inst);
+		Model.addRow(new Object[]{inst.isEnable(), String.valueOf(AnchorCount),
+				String.valueOf(inst.getX()), String.valueOf(inst.getY()), String.valueOf(inst.getZ())});
+		px = inst.getX() + 2; py = inst.getY() +2;
+		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
+		AnchorCount ++;
+	}
 	public void delAnchor() {
 		if(AnchorCount > 0) {
 			AnchorCount --;
