@@ -1,7 +1,10 @@
 package uwbRTLS;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
+//import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -9,40 +12,47 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import uwbRTLS.CoordTranfer.CoordTrans;
+import uwbRTLS.signComponent.uiComponent;
+
 public class myCanvas extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
+	private static final Color BackColor = new Color(180, 180, 180);
 
-	private Image img = null;
 	private CoordTrans coord = null;
-	private int xOff = 0, yOff = 0;
+	private uiComponent BackGround = null;
+	private ArrayList<uiComponent> Layers = new ArrayList<uiComponent>();
 	public myCanvas() {
-		this.addComponentListener(this);
-		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
-	}
-	public myCanvas(Image img) {
-		if(img != null) {
-			this.img = img;
-		}
+		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+		BackGround = new uiComponent(screensize.width, screensize.height);
+		Graphics g = BackGround.getGraphics();
+		g.setColor(BackColor);
+		g.fillRect(0, 0, screensize.width, screensize.height);
+		Layers.add(BackGround);
 		this.addComponentListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addMouseWheelListener(this);
 	}
+
 	public void setCoordTrans(CoordTrans c) {
 		coord = c;
 	}
-	public void setImage(Image img) {
-		if(img != null) {
-			this.img = img;
-		}
+	public void addLayer(uiComponent ui) {
+		Layers.add(ui);
+	}
+	public void delLayer(uiComponent ui) {
+		Layers.remove(ui);
 	}
 
 	public void paintComponent(Graphics g) {
-		g.drawImage(img, xOff, yOff, this);
+		for(uiComponent ui : Layers) {
+			g.drawImage(ui.getImage(), ui.getXPos(), ui.getYPos(), this);
+		}
 	}
 
 	private int xMouse = 0, yMouse = 0;
