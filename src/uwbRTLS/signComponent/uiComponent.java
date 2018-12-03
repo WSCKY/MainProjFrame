@@ -11,7 +11,7 @@ public class uiComponent {
 	private int ySize = 0;
 	private Image img = null;
 	private Graphics g = null;
-	
+
 	public uiComponent(int xs, int ys) {
 		xSize = xs;
 		ySize = ys;
@@ -36,5 +36,8 @@ public class uiComponent {
 	}
 	public Graphics getGraphics() {
 		return g;
+	}
+	public Image getImage() {
+		return img;
 	}
 }
