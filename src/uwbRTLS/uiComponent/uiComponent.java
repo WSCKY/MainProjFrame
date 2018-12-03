@@ -1,4 +1,4 @@
-package uwbRTLS.signComponent;
+package uwbRTLS.uiComponent;
 
 import java.awt.Graphics;
 import java.awt.Image;

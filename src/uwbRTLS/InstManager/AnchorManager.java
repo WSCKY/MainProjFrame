@@ -30,7 +30,7 @@ import uwbRTLS.CoordTranfer.CoordTransEvent;
 import uwbRTLS.CoordTranfer.CoordTransEventListener;
 import uwbRTLS.InstManager.Instance.uwbAnchor;
 import uwbRTLS.InstManager.Instance.uwbInstance;
-import uwbRTLS.signComponent.signAnchor;
+import uwbRTLS.uiComponent.uiAnchor;
 
 public class AnchorManager extends JPanel implements CoordTransEventListener {
 	private static final long serialVersionUID = 1L;
@@ -128,7 +128,7 @@ public class AnchorManager extends JPanel implements CoordTransEventListener {
 //                System.out.println("(" + row + ", " + column + ") Update.");
             	uwbAnchor anchor = AnchorList.get(row);
                 uwbInstance inst = anchor.getInst();
-                signAnchor ui = anchor.getUI();
+                uiAnchor ui = anchor.getUI();
                 AnchorManagerEvent event = null;
                 switch(column) {
 	                case 0:
@@ -183,7 +183,7 @@ public class AnchorManager extends JPanel implements CoordTransEventListener {
 		pz = Double.valueOf(zText.getText());
 		uwbInstance inst = new uwbInstance(px, py, pz, AnchorCount);
 		Point p = coordTrans.Real2UI(px, py);
-		signAnchor sign = new signAnchor(p.x, p.y);
+		uiAnchor sign = new uiAnchor(p.x, p.y);
 		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
 		px += 2; py += 2;
@@ -197,7 +197,7 @@ public class AnchorManager extends JPanel implements CoordTransEventListener {
 	public void addAnchor(double x, double y, double z) {
 		uwbInstance inst = new uwbInstance(x, y, z, AnchorCount);
 		Point p = coordTrans.Real2UI(x, y);
-		signAnchor sign = new signAnchor(p.x, p.y);
+		uiAnchor sign = new uiAnchor(p.x, p.y);
 		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
 		px = x + 2; py = y + 2;
@@ -211,7 +211,7 @@ public class AnchorManager extends JPanel implements CoordTransEventListener {
 	public void addAnchor(uwbInstance inst) {
 		inst.setID(AnchorCount);
 		Point p = coordTrans.Real2UI(inst.getX(), inst.getY());
-		signAnchor sign = new signAnchor(p.x, p.y);
+		uiAnchor sign = new uiAnchor(p.x, p.y);
 		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{inst.isEnable(), String.valueOf(AnchorCount),
 				String.valueOf(inst.getX()), String.valueOf(inst.getY()), String.valueOf(inst.getZ())});

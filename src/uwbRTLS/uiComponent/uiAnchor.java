@@ -1,14 +1,14 @@
-package uwbRTLS.signComponent;
+package uwbRTLS.uiComponent;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class signAnchor extends uiComponent {
+public class uiAnchor extends uiComponent {
 	private static final int SIZE_X = 20;
 	private static final int SIZE_Y = 20;
 	private int id = 0;
 	private Graphics g = null;
-	public signAnchor(int xp, int yp) {
+	public uiAnchor(int xp, int yp) {
 		super(SIZE_X, SIZE_Y);
 		// TODO Auto-generated constructor stub
 		this.setPos(xp - (SIZE_X / 2), yp - (SIZE_Y / 2));
@@ -18,7 +18,7 @@ public class signAnchor extends uiComponent {
 		g.drawLine(0, SIZE_Y, SIZE_X, 0);
 		g.drawArc((int)(SIZE_X * 0.15), (int)(SIZE_Y * 0.15), (int)(SIZE_X * 0.7), (int)(SIZE_Y * 0.7), 0, 360);
 	}
-	public signAnchor(int xp, int yp, int id) {
+	public uiAnchor(int xp, int yp, int id) {
 		this(xp, yp);
 		this.id = id;
 	}

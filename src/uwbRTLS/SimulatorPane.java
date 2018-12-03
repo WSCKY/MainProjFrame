@@ -1,11 +1,6 @@
 package uwbRTLS;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JPanel;
@@ -22,8 +17,6 @@ import uwbRTLS.InstManager.AnchorManager;
 import uwbRTLS.InstManager.AnchorManagerEvent;
 import uwbRTLS.InstManager.AnchorManagerEventListener;
 import uwbRTLS.InstManager.Instance.uwbAnchor;
-import uwbRTLS.InstManager.Instance.uwbInstance;
-import uwbRTLS.signComponent.signAnchor;
 
 public class SimulatorPane extends JPanel implements Runnable, DecodeEventListener, AnchorManagerEventListener {
 	private static final long serialVersionUID = 1L;

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import uwbRTLS.CoordTranfer.CoordTrans;
-import uwbRTLS.signComponent.uiComponent;
+import uwbRTLS.uiComponent.uiComponent;
 
 public class myCanvas extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
