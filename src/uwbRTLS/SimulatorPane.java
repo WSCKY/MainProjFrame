@@ -17,48 +17,56 @@ import protocol.ComPackage;
 import protocol.PackageTypes.TypeUWB;
 import protocol.event.DecodeEvent;
 import protocol.event.DecodeEventListener;
+import uwbRTLS.CoordTranfer.CoordTrans;
+import uwbRTLS.InstManager.AnchorManager;
+import uwbRTLS.InstManager.AnchorManagerEvent;
+import uwbRTLS.InstManager.AnchorManagerEventListener;
+import uwbRTLS.InstManager.Instance.uwbAnchor;
+import uwbRTLS.InstManager.Instance.uwbInstance;
+import uwbRTLS.signComponent.signAnchor;
 
-public class SimulatorPane extends JPanel implements Runnable, DecodeEventListener {
+public class SimulatorPane extends JPanel implements Runnable, DecodeEventListener, AnchorManagerEventListener {
 	private static final long serialVersionUID = 1L;
 	private static final int PainterWidth = 1000;
 	private static final int PainterHeight = 600;
 	private static final int DistDataNumber = 4;
-	private static final Color backColor = new Color(180, 180, 180);
+//	private static final Color backColor = new Color(180, 180, 180);
 
 	private ComPackage rxData = null;
 	private double[] dist = new double[DistDataNumber];
 	
 	private JSplitPane SplitPanel = null;
 	private JSplitPane toolSplit = null;
-	private Image img = null;
-	private Graphics gGraph = null;
-	private myCanvas Drawer = null;
+//	private Image img = null;
+//	private Graphics gGraph = null;
+	private myCanvas Canvas = null;
 
-	private myVehicle myTag = null;
-	private myPainter Painter = null;
+//	private myVehicle myTag = null;
+//	private myPainter Painter = null;
 	private AnchorManager anchorManager = null;
 	private CoordTrans coordTrans = null;
 	public SimulatorPane() {
 		SplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
-		Drawer = new myCanvas(img);
-		gGraph = img.getGraphics();
-		myTag = new myVehicle(gGraph);
-		myTag.update();
-		myTag.setName("kyChu");
+//		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
+		Canvas = new myCanvas();//img
+//		gGraph = img.getGraphics();
+//		myTag = new myVehicle(gGraph);
+//		myTag.update();
+//		myTag.setName("kyChu");
 //		instTag = new uwbInstance(0, 0, 0);
-		Painter = new myPainter(gGraph);
-		anchorManager = new AnchorManager();
+//		Painter = new myPainter(gGraph);
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		coordTrans.setRealArea(4.0, 4.0);
-		Drawer.setCoordTrans(coordTrans);
+		Canvas.setCoordTrans(coordTrans);
+		anchorManager = new AnchorManager(coordTrans);
+		anchorManager.addAnchorManagerListener(this);
 		toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		toolSplit.setTopComponent(anchorManager);
 		toolSplit.setBottomComponent(coordTrans);
 		toolSplit.setOneTouchExpandable(true);
 		toolSplit.setDividerSize(10);
 		toolSplit.setDividerLocation(PainterHeight - 300);
-		SplitPanel.setLeftComponent(Drawer);
+		SplitPanel.setLeftComponent(Canvas);
 		SplitPanel.setRightComponent(toolSplit);
 		SplitPanel.setDividerLocation(PainterWidth - 300);
 //		SplitPanel.setDividerSize(20);
@@ -78,8 +86,8 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true) {
-			refreshCanvas();
-			myTag.update();
+//			refreshCanvas();
+//			myTag.update();
 //			testLocus();
 			try {
 				TimeUnit.MILLISECONDS.sleep(100);
@@ -118,42 +126,61 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 	}
 
 	int deg = 0;
-	public void testLocus() {
-		gGraph.setColor(backColor);
-		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
-		double x = 3.0 + 0.8 * Math.sin(Math.toRadians(deg));
-		double y = 2.0 + 0.5 * Math.cos(Math.toRadians(deg));
-		deg += 6; if(deg > 360) deg -= 360;
-		Painter.addLocusPoint(coordTrans.Real2UI(x, y));
-		Painter.drawLocus();
-	}
+//	public void testLocus() {
+////		gGraph.setColor(backColor);
+////		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
+//		double x = 3.0 + 0.8 * Math.sin(Math.toRadians(deg));
+//		double y = 2.0 + 0.5 * Math.cos(Math.toRadians(deg));
+//		deg += 6; if(deg > 360) deg -= 360;
+//		Painter.addLocusPoint(coordTrans.Real2UI(x, y));
+//		Painter.drawLocus();
+//	}
 
-double x1,y1,x2,y2,x3,y3;
-	public void refreshCanvas() {
-		gGraph.setColor(backColor);
-		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
-		int n = anchorManager.getAnchorNumber();
-		uwbInstance inst = null;
-		if(n > 4) n = 4;
-		for(int i = 0; i < n; i ++) {
-			inst = anchorManager.getAnchor(i);
-			if(inst != null) {
-				Painter.drawAnchorSign(coordTrans.Real2UI(inst.getX(), inst.getY()));
-			}
-		}
-		if(n >= 3) {
-			inst = anchorManager.getAnchor(0);
-			x1 = inst.getX(); y1 = inst.getY();
-			Painter.drawCircleShip(coordTrans.Real2UI(x1, y1), coordTrans.Real2UI(dist[0]));
-			inst = anchorManager.getAnchor(1);
-			x2 = inst.getX(); y2 = inst.getY();
-			Painter.drawCircleShip(coordTrans.Real2UI(x2, y2), coordTrans.Real2UI(dist[1]));
-			inst = anchorManager.getAnchor(2);
-			x3 = inst.getX(); y3 = inst.getY();
-			Painter.drawCircleShip(coordTrans.Real2UI(x3, y3), coordTrans.Real2UI(dist[2]));
-			double[] ret = CompPosition(x1, y1, dist[0], x2, y2, dist[1], x3, y3, dist[2]);
-			Point p = coordTrans.Real2UI(ret[0], ret[1]);
-			myTag.moveTo(p.x, p.y);
+//double x1,y1,x2,y2,x3,y3;
+//	public void refreshCanvas() {
+////		gGraph.setColor(backColor);
+////		gGraph.fillRect(0, 0, PainterWidth, PainterHeight);
+//		int n = anchorManager.getAnchorNumber();
+//		uwbInstance inst = null;
+//		if(n > 4) n = 4;
+//		for(int i = 0; i < n; i ++) {
+//			inst = anchorManager.getAnchor(i);
+//			if(inst != null) {
+//				Painter.drawAnchorSign(coordTrans.Real2UI(inst.getX(), inst.getY()));
+//			}
+//		}
+//		if(n >= 3) {
+//			inst = anchorManager.getAnchor(0);
+//			x1 = inst.getX(); y1 = inst.getY();
+//			Painter.drawCircleShip(coordTrans.Real2UI(x1, y1), coordTrans.Real2UI(dist[0]));
+//			inst = anchorManager.getAnchor(1);
+//			x2 = inst.getX(); y2 = inst.getY();
+//			Painter.drawCircleShip(coordTrans.Real2UI(x2, y2), coordTrans.Real2UI(dist[1]));
+//			inst = anchorManager.getAnchor(2);
+//			x3 = inst.getX(); y3 = inst.getY();
+//			Painter.drawCircleShip(coordTrans.Real2UI(x3, y3), coordTrans.Real2UI(dist[2]));
+//			double[] ret = CompPosition(x1, y1, dist[0], x2, y2, dist[1], x3, y3, dist[2]);
+//			Point p = coordTrans.Real2UI(ret[0], ret[1]);
+//			myTag.moveTo(p.x, p.y);
+//		}
+//	}
+
+	@Override
+	public void AnchorUpdated(AnchorManagerEvent event) {
+		// TODO Auto-generated method stub
+		uwbAnchor anchor = (uwbAnchor)event.getSource();
+		switch(event.getType()) {
+		case AnchorManagerEvent.ADD:
+			Canvas.addLayer(anchor.getUI());
+			break;
+		case AnchorManagerEvent.DEL:
+			Canvas.delLayer(anchor.getUI());
+			break;
+		case AnchorManagerEvent.MOV:
+			break;
+		case AnchorManagerEvent.STA:
+			break;
+		default: break;
 		}
 	}
 
