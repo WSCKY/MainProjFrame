@@ -1,4 +1,4 @@
-package uwbRTLS;
+package uwbRTLS.CoordTranfer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -42,6 +43,8 @@ public class CoordTrans extends JPanel {
 	private boolean XY_SWAP = false;
 	private boolean X_Mirror = false;
 	private boolean Y_Mirror = false;
+
+	private ArrayList<CoordTransEventListener> Listeners = new ArrayList<CoordTransEventListener>();
 
 	private void initUI() {
 		this.setLayout(new BorderLayout());
@@ -97,13 +100,26 @@ public class CoordTrans extends JPanel {
 	public void move(int x, int y) {
 		UI_OrgX += x;
 		UI_OrgY += y;
+		publishListener();
 	}
 	public void moveTo(int x, int y) {
 		UI_OrgX = x;
 		UI_OrgY = y;
+		publishListener();
 	}
 	public void zoom(double scale) {
 		TransGain *= scale;
+		publishListener();
+	}
+
+	private void publishListener() {
+		CoordTransEvent event = new CoordTransEvent(this);
+		for(CoordTransEventListener listener : Listeners) {
+			listener.CoordinateUpdate(event);
+		}
+	}
+	public void addCoordTransEventListener(CoordTransEventListener listener) {
+		Listeners.add(listener);
 	}
 
 	public void updateGain() {
@@ -119,6 +135,7 @@ public class CoordTrans extends JPanel {
 		}
 
 		TransGain = (s1 < s2) ? s1 : s2;
+		publishListener();
 	}
 
 	ChangeListener SliderCL = new ChangeListener() {
@@ -137,14 +154,12 @@ public class CoordTrans extends JPanel {
 			JCheckBox cb = (JCheckBox)e.getSource();
 			if(cb == swapCB) {
 				XY_SWAP = swapCB.isSelected();
-//				System.out.println("SWAP:"+XY_SWAP);
 			} else if(cb == xMirCB) {
 				X_Mirror = xMirCB.isSelected();
-//				System.out.println("X:"+X_Mirror);
 			} else if(cb == yMirCB) {
 				Y_Mirror = yMirCB.isSelected();
-//				System.out.println("Y:"+Y_Mirror);
 			}
+			publishListener();
 		}
 	};
 	MouseListener SliderML = new MouseListener() {
@@ -164,6 +179,7 @@ public class CoordTrans extends JPanel {
 			TransGain = TransGain * UserScale;
 			UserScale = 1.0;
 			scaleSlider.setValue(0);
+			publishListener();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
