@@ -1,10 +1,11 @@
-package uwbRTLS;
+package uwbRTLS.InstManager;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,7 +25,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class AnchorManager extends JPanel {
+import uwbRTLS.CoordTranfer.CoordTrans;
+import uwbRTLS.CoordTranfer.CoordTransEvent;
+import uwbRTLS.CoordTranfer.CoordTransEventListener;
+import uwbRTLS.InstManager.Instance.uwbAnchor;
+import uwbRTLS.InstManager.Instance.uwbInstance;
+import uwbRTLS.signComponent.signAnchor;
+
+public class AnchorManager extends JPanel implements CoordTransEventListener {
 	private static final long serialVersionUID = 1L;
 
 	private static int AnchorCount = 0;
@@ -37,8 +45,12 @@ public class AnchorManager extends JPanel {
 	private JLabel textLab = null;
 	private JTextField xText = null, yText = null, zText = null;
 	private JButton addBtn = null, delBtn = null;
-	private ArrayList<uwbInstance> AnchorList = new ArrayList<uwbInstance>();
-	public AnchorManager() {
+	private CoordTrans coordTrans = null;
+	private ArrayList<uwbAnchor> AnchorList = new ArrayList<uwbAnchor>();
+	private ArrayList<AnchorManagerEventListener> Listeners = new ArrayList<AnchorManagerEventListener>();
+	public AnchorManager(CoordTrans coord) {
+		coordTrans = coord;
+		coordTrans.addCoordTransEventListener(this);
 		this.setLayout(new BorderLayout());
 		Model = new DefaultTableModel(null, ColumnNames);
 		mTable = new JTable(Model);
@@ -95,8 +107,8 @@ public class AnchorManager extends JPanel {
 		p.add(p1); p.add(p2);
 		this.add(p, BorderLayout.SOUTH);
 	}
-	public AnchorManager(int defaultNumber) {
-		this();
+	public AnchorManager(CoordTrans coord, int defaultNumber) {
+		this(coord);
 		do {
 			addAnchor();
 			defaultNumber --;
@@ -114,13 +126,40 @@ public class AnchorManager extends JPanel {
 //                System.out.println("Insert row " + row + ".");
             }else if(type == TableModelEvent.UPDATE) {
 //                System.out.println("(" + row + ", " + column + ") Update.");
-                uwbInstance inst = AnchorList.get(row);
+            	uwbAnchor anchor = AnchorList.get(row);
+                uwbInstance inst = anchor.getInst();
+                signAnchor ui = anchor.getUI();
+                AnchorManagerEvent event = null;
                 switch(column) {
-	                case 0: inst.Enable((boolean) mTable.getValueAt(row, 0)); break;
-	                case 1: inst.setID(Integer.parseInt((String) mTable.getValueAt(row, 1))); break;
-	                case 2: inst.setX(Double.valueOf((String) mTable.getValueAt(row, 2))); break;
-	                case 3: inst.setY(Double.valueOf((String) mTable.getValueAt(row, 3))); break;
-	                case 4: inst.setZ(Double.valueOf((String) mTable.getValueAt(row, 4))); break;
+	                case 0:
+	                	boolean flag = (boolean) mTable.getValueAt(row, 0);
+	                	inst.Enable(flag);
+	                	ui.enable(flag);
+	                	event = new AnchorManagerEvent(anchor, AnchorManagerEvent.STA);
+	                	publishListener(event);
+	                	break;
+	                case 1:
+	                	inst.setID(Integer.parseInt((String) mTable.getValueAt(row, 1)));
+	                	break;
+	                case 2:
+	                	inst.setX(Double.valueOf((String) mTable.getValueAt(row, 2)));
+	                	Point px = coordTrans.Real2UI(inst.getX(), inst.getY());
+	                	ui.setPos(px.x, px.y);
+	                	event = new AnchorManagerEvent(anchor, AnchorManagerEvent.MOV);
+	                	publishListener(event);
+	                	break;
+	                case 3:
+	                	inst.setY(Double.valueOf((String) mTable.getValueAt(row, 3)));
+	                	Point py = coordTrans.Real2UI(inst.getX(), inst.getY());
+	                	ui.setPos(py.x, py.y);
+	                	event = new AnchorManagerEvent(anchor, AnchorManagerEvent.MOV);
+	                	publishListener(event);
+	                	break;
+	                case 4:
+	                	inst.setZ(Double.valueOf((String) mTable.getValueAt(row, 4)));
+	                	event = new AnchorManagerEvent(anchor, AnchorManagerEvent.MOV);
+	                	publishListener(event);
+	                	break;
 	                default: break;
                 }
             }else if (type == TableModelEvent.DELETE) {
@@ -130,40 +169,82 @@ public class AnchorManager extends JPanel {
             }
 		}
 	};
+	private void publishListener(AnchorManagerEvent event) {
+		for(AnchorManagerEventListener lis : Listeners) {
+			lis.AnchorUpdated(event);
+		}
+	}
+	public void addAnchorManagerListener(AnchorManagerEventListener listener) {
+		Listeners.add(listener);
+	}
 	public void addAnchor() {
 		px = Double.valueOf(xText.getText());
 		py = Double.valueOf(yText.getText());
 		pz = Double.valueOf(zText.getText());
-		AnchorList.add(new uwbInstance(px, py, pz, AnchorCount));
+		uwbInstance inst = new uwbInstance(px, py, pz, AnchorCount);
+		Point p = coordTrans.Real2UI(px, py);
+		signAnchor sign = new signAnchor(p.x, p.y);
+		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
 		px += 2; py += 2;
 		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
+		AnchorManagerEvent event = new AnchorManagerEvent(AnchorList.get(AnchorCount), AnchorManagerEvent.ADD);
+		for(AnchorManagerEventListener lis : Listeners) {
+			lis.AnchorUpdated(event);
+		}
 		AnchorCount ++;
 	}
 	public void addAnchor(double x, double y, double z) {
-		AnchorList.add(new uwbInstance(x, y, z, AnchorCount));
+		uwbInstance inst = new uwbInstance(x, y, z, AnchorCount);
+		Point p = coordTrans.Real2UI(x, y);
+		signAnchor sign = new signAnchor(p.x, p.y);
+		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{true, String.valueOf(AnchorCount), String.valueOf(px), String.valueOf(py), String.valueOf(pz)});
 		px = x + 2; py = y + 2;
 		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
+		AnchorManagerEvent event = new AnchorManagerEvent(AnchorList.get(AnchorCount), AnchorManagerEvent.ADD);
+		for(AnchorManagerEventListener lis : Listeners) {
+			lis.AnchorUpdated(event);
+		}
 		AnchorCount ++;
 	}
 	public void addAnchor(uwbInstance inst) {
 		inst.setID(AnchorCount);
-		AnchorList.add(inst);
+		Point p = coordTrans.Real2UI(inst.getX(), inst.getY());
+		signAnchor sign = new signAnchor(p.x, p.y);
+		AnchorList.add(new uwbAnchor(inst, sign));
 		Model.addRow(new Object[]{inst.isEnable(), String.valueOf(AnchorCount),
 				String.valueOf(inst.getX()), String.valueOf(inst.getY()), String.valueOf(inst.getZ())});
 		px = inst.getX() + 2; py = inst.getY() +2;
 		xText.setText(""+px); yText.setText(""+py); zText.setText(""+pz);
+		AnchorManagerEvent event = new AnchorManagerEvent(AnchorList.get(AnchorCount), AnchorManagerEvent.ADD);
+		for(AnchorManagerEventListener lis : Listeners) {
+			lis.AnchorUpdated(event);
+		}
 		AnchorCount ++;
 	}
 	public void delAnchor() {
 		if(AnchorCount > 0) {
 			AnchorCount --;
+			AnchorManagerEvent event = new AnchorManagerEvent(AnchorList.get(AnchorCount), AnchorManagerEvent.DEL);
+			for(AnchorManagerEventListener lis : Listeners) {
+				lis.AnchorUpdated(event);
+			}
 			AnchorList.remove(AnchorCount);
 			Model.removeRow(AnchorCount);
 		}
 	}
-	public uwbInstance getAnchor(int index) {
+	@Override
+	public void CoordinateUpdate(CoordTransEvent event) {
+		// TODO Auto-generated method stub
+		CoordTrans coord = (CoordTrans)event.getSource();
+		for(uwbAnchor a : AnchorList) {
+			uwbInstance inst = a.getInst();
+			Point p = coord.Real2UI(inst.getX(), inst.getY());
+			a.getUI().setPos(p.x, p.y);
+		}
+	}
+	public uwbAnchor getAnchor(int index) {
 		if(index < AnchorCount) {
 			return AnchorList.get(index);
 		}
@@ -177,7 +258,8 @@ public class AnchorManager extends JPanel {
             System.err.println("Couldn't use system look and feel.");
         }
 		JFrame tFrame = new JFrame();
-		AnchorManager tas = new AnchorManager(10);
+		CoordTrans coord = new CoordTrans(600, 600, 4.0, 4.0);
+		AnchorManager tas = new AnchorManager(coord, 10);
 		tFrame.add(tas);
 		tFrame.setSize(280, 500);
 		tFrame.setLocation(1000, 300);
