@@ -17,6 +17,7 @@ import uwbRTLS.InstManager.AnchorManager;
 import uwbRTLS.InstManager.AnchorManagerEvent;
 import uwbRTLS.InstManager.AnchorManagerEventListener;
 import uwbRTLS.InstManager.Instance.uwbAnchor;
+import uwbRTLS.uiComponent.uiTag;
 
 public class SimulatorPane extends JPanel implements Runnable, DecodeEventListener, AnchorManagerEventListener {
 	private static final long serialVersionUID = 1L;
@@ -48,6 +49,7 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 //		myTag.setName("kyChu");
 //		instTag = new uwbInstance(0, 0, 0);
 //		Painter = new myPainter(gGraph);
+		Canvas.addLayer(new uiTag(100, 100));
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		coordTrans.setRealArea(4.0, 4.0);
 		Canvas.setCoordTrans(coordTrans);
