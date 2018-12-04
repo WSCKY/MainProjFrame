@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import uwbRTLS.uiComponent.uiCoordAxis;
+
 public class CoordTrans {
 	private int UI_Width = 800, UI_Height = 800; // default 800x800 (pixels)
 	private double Real_xSize = 20.0, Real_ySize = 20.0; // default 20.0x20.0 (unit:m)
@@ -15,21 +17,46 @@ public class CoordTrans {
 	private boolean X_Mirror = false;
 	private boolean Y_Mirror = false;
 
+	private CoordConfig ConfigPane = null;
+	private uiCoordAxis CoordGUI = null;
+
 	private ArrayList<CoordTransEventListener> Listeners = new ArrayList<CoordTransEventListener>();
 
-	public CoordTrans() { updateGain(); }
-	public CoordTrans(int w, int h) {
-		setUIArea(w, h);
+	public CoordTrans() {
 		updateGain();
+		CoordGUI = new uiCoordAxis(UI_OrgX, UI_OrgY);
+		ConfigPane = new CoordConfig(this);
+	}
+	public CoordTrans(int w, int h) {
+		UI_Width = w;
+		UI_Height = h;
+		updateGain();
+		CoordGUI = new uiCoordAxis(UI_OrgX, UI_OrgY);
+		ConfigPane = new CoordConfig(this);
 	}
 	public CoordTrans(double x, double y) {
-		setRealArea(x, y);
+		Real_xSize = x;
+		Real_ySize = y;
 		updateGain();
+		CoordGUI = new uiCoordAxis(UI_OrgX, UI_OrgY);
+		ConfigPane = new CoordConfig(this);
 	}
 	public CoordTrans(int w, int h, double x, double y) {
-		setUIArea(w, h);
-		setRealArea(x, y);
+		UI_Width = w;
+		UI_Height = h;
+		Real_xSize = x;
+		Real_ySize = y;
 		updateGain();
+		CoordGUI = new uiCoordAxis(UI_OrgX, UI_OrgY);
+		ConfigPane = new CoordConfig(this);
+	}
+
+	public CoordConfig getConfigPane() {
+		return ConfigPane;
+	}
+
+	public uiCoordAxis getGUI() {
+		return CoordGUI;
 	}
 
 	public void setUIArea(int w, int h) {
@@ -76,11 +103,13 @@ public class CoordTrans {
 	public void move(int x, int y) {
 		UI_OrgX += x;
 		UI_OrgY += y;
+		CoordGUI.setPos(UI_OrgX, UI_OrgY);
 		publishListener();
 	}
 	public void moveTo(int x, int y) {
 		UI_OrgX = x;
 		UI_OrgY = y;
+		CoordGUI.setPos(UI_OrgX, UI_OrgY);
 		publishListener();
 	}
 	public void zoom(double scale) {
