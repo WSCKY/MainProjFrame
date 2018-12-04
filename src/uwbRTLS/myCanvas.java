@@ -3,6 +3,7 @@ package uwbRTLS;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 //import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -12,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -24,15 +26,14 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 	private static final Color BackColor = new Color(180, 180, 180);
 
 	private CoordTrans coord = null;
-	private uiComponent BackGround = null;
+	private Image DeskTop = null;
 	private ArrayList<uiComponent> Layers = new ArrayList<uiComponent>();
 	public myCanvas() {
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-		BackGround = new uiComponent(screensize.width, screensize.height);
-		Graphics g = BackGround.getGraphics();
+		DeskTop = new BufferedImage(screensize.width, screensize.height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics g = DeskTop.getGraphics();
 		g.setColor(BackColor);
 		g.fillRect(0, 0, screensize.width, screensize.height);
-		Layers.add(BackGround);
 		this.addComponentListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -48,8 +49,12 @@ public class myCanvas extends JPanel implements ComponentListener, MouseListener
 	public void delLayer(uiComponent ui) {
 		Layers.remove(ui);
 	}
+	public void setDeskTop(Image img) {
+		DeskTop = img;
+	}
 
 	public void paintComponent(Graphics g) {
+		g.drawImage(DeskTop, 0, 0, this);
 		for(uiComponent ui : Layers) {
 			g.drawImage(ui.getImage(), ui.getXPos(), ui.getYPos(), this);
 		}
