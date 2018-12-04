@@ -1,8 +1,14 @@
 package uwbRTLS;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
@@ -19,20 +25,18 @@ import uwbRTLS.InstManager.AnchorManagerEventListener;
 import uwbRTLS.InstManager.Instance.uwbAnchor;
 import uwbRTLS.uiComponent.uiTag;
 
-public class SimulatorPane extends JPanel implements Runnable, DecodeEventListener, AnchorManagerEventListener {
+public class SimulatorPane extends JPanel implements Runnable, ComponentListener,
+					DecodeEventListener, AnchorManagerEventListener {
 	private static final long serialVersionUID = 1L;
 	private static final int PainterWidth = 1000;
 	private static final int PainterHeight = 600;
 	private static final int DistDataNumber = 4;
-//	private static final Color backColor = new Color(180, 180, 180);
 
 	private ComPackage rxData = null;
 	private double[] dist = new double[DistDataNumber];
 	
 	private JSplitPane SplitPanel = null;
 	private JSplitPane toolSplit = null;
-//	private Image img = null;
-//	private Graphics gGraph = null;
 	private myCanvas Canvas = null;
 
 //	private myVehicle myTag = null;
@@ -41,14 +45,20 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 	private CoordTrans coordTrans = null;
 	public SimulatorPane() {
 		SplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-//		img = new BufferedImage(PainterWidth, PainterHeight, BufferedImage.TYPE_4BYTE_ABGR);
-		Canvas = new myCanvas();//img
-//		gGraph = img.getGraphics();
+		Canvas = new myCanvas();
 //		myTag = new myVehicle(gGraph);
 //		myTag.update();
 //		myTag.setName("kyChu");
 //		instTag = new uwbInstance(0, 0, 0);
 //		Painter = new myPainter(gGraph);
+		Image backImg;
+		try {
+			backImg = ImageIO.read(new File(getClass().getResource("bz.jpg").getFile()));
+			Canvas.setDeskTop(backImg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("can not set canvas desktop.");
+		}
 		Canvas.addLayer(new uiTag(100, 100));
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		coordTrans.setRealArea(4.0, 4.0);
@@ -60,13 +70,9 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 		toolSplit.setBottomComponent(coordTrans);
 		toolSplit.setOneTouchExpandable(true);
 		toolSplit.setDividerSize(10);
-		toolSplit.setDividerLocation(PainterHeight - 300);
 		SplitPanel.setLeftComponent(Canvas);
 		SplitPanel.setRightComponent(toolSplit);
-		SplitPanel.setDividerLocation(PainterWidth - 300);
-//		SplitPanel.setDividerSize(20);
 		SplitPanel.setEnabled(false);
-//		SplitPanel.setOneTouchExpandable(true);
 
 		this.setLayout(new BorderLayout());
 		this.add(SplitPanel, BorderLayout.CENTER);
@@ -208,6 +214,31 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 		
 	}
 
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		toolSplit.setDividerLocation(toolSplit.getHeight() - 200);
+		SplitPanel.setDividerLocation(SplitPanel.getWidth() - 300);
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public static void main(String[] args) {
 		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -221,8 +252,9 @@ public class SimulatorPane extends JPanel implements Runnable, DecodeEventListen
 		JPanel mp = mf.getUsrMainPanel();
 		mp.setLayout(new BorderLayout());
 		mp.add(sp, BorderLayout.CENTER);
-		mf.getDecoder().addDecodeListener(sp);
-		mf.setResizable(false);
+		mf.addDecodeEventListener(sp);
+		mf.addComponentListener(sp);
+		mf.setResizable(true);
 		mf.setVisible(true);
 	}
 }
