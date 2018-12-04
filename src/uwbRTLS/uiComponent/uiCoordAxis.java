@@ -19,4 +19,7 @@ public class uiCoordAxis extends uiComponent {
 		g.drawLine(29, AxisLength - 20, 20, AxisLength);
 		this.setPos(xp, yp);
 	}
+	public void setPos(int x, int y) {
+		super.setPos(x - 20, y - 20);
+	}
 }
