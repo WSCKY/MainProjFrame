@@ -18,6 +18,7 @@ import protocol.ComPackage;
 import protocol.PackageTypes.TypeUWB;
 import protocol.event.DecodeEvent;
 import protocol.event.DecodeEventListener;
+import uwbRTLS.CoordTranfer.CoordConfig;
 import uwbRTLS.CoordTranfer.CoordTrans;
 import uwbRTLS.InstManager.AnchorManager;
 import uwbRTLS.InstManager.AnchorManagerEvent;
@@ -34,7 +35,7 @@ public class SimulatorPane extends JPanel implements Runnable, ComponentListener
 
 	private ComPackage rxData = null;
 	private double[] dist = new double[DistDataNumber];
-	
+
 	private JSplitPane SplitPanel = null;
 	private JSplitPane toolSplit = null;
 	private myCanvas Canvas = null;
@@ -59,15 +60,16 @@ public class SimulatorPane extends JPanel implements Runnable, ComponentListener
 			// TODO Auto-generated catch block
 			System.out.println("can not set canvas desktop.");
 		}
-		Canvas.addLayer(new uiTag(100, 100));
+		Canvas.addLayer(new uiTag(0, 0));
 		coordTrans = new CoordTrans(PainterWidth, PainterHeight);
 		coordTrans.setRealArea(4.0, 4.0);
 		Canvas.setCoordTrans(coordTrans);
+		Canvas.addLayer(coordTrans.getGUI());
 		anchorManager = new AnchorManager(coordTrans);
 		anchorManager.addAnchorManagerListener(this);
 		toolSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		toolSplit.setTopComponent(anchorManager);
-		toolSplit.setBottomComponent(coordTrans);
+		toolSplit.setBottomComponent(new CoordConfig(coordTrans));
 		toolSplit.setOneTouchExpandable(true);
 		toolSplit.setDividerSize(10);
 		SplitPanel.setLeftComponent(Canvas);
