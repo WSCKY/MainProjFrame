@@ -12,11 +12,25 @@ public class uiComponent {
 	private Image img = null;
 	private Graphics g = null;
 
+	public uiComponent() {
+		xSize = 1;
+		ySize = 1;
+		img = new BufferedImage(xSize, ySize, BufferedImage.TYPE_4BYTE_ABGR);
+		g = img.getGraphics();
+	}
 	public uiComponent(int xs, int ys) {
 		xSize = xs;
 		ySize = ys;
 		img = new BufferedImage(xSize, ySize, BufferedImage.TYPE_4BYTE_ABGR);
 		g = img.getGraphics();
+	}
+	public void setImage(Image img, int w, int h) {
+		if(img != null) {
+			xSize = w;
+			ySize = h;
+			this.img = img;
+			g = this.img.getGraphics();
+		}
 	}
 	public void setSize(int w, int h) {
 		xSize = w;
