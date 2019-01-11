@@ -84,10 +84,12 @@ public class CoordTrans {
 	}
 	public void x_mirror(boolean flag) {
 		X_Mirror = flag;
+		CoordGUI.xMirror(flag);
 		publishListener();
 	}
 	public void y_mirror(boolean flag) {
 		Y_Mirror = flag;
+		CoordGUI.yMirror(flag);
 		publishListener();
 	}
 	public boolean isXY_SWAP() {
